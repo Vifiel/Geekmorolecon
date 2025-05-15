@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html>
+<head>
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
+   <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
+</head>
 <body>
+
+
+
+<button class="rightbtn" id="Reg" onclick="openForm()">Войти</button>
+<div class="form-popup" id="regForm">
+    <form class="form-container">
+        <label for="email"><b>Email</b></label>
+        <input type="text" placeholder="Введите email" name="email" required>
+ 
+        <label for="pswd"><b>Пароль</b></label>
+        <input type="password" placeholder="Введите пароль" name="pswd" required>
+
+        <button type="submit" class="subbtn">Войти</button>
+        <button type="button" class="btnclose" onclick="closeForm()">Закрыть</button>
+    </form>
+</div>
+
 
 <h1 style="text-align: center; vertical-align:middle">Сайт для реги</h1>
 
