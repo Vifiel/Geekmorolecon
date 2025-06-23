@@ -12,3 +12,6 @@ htmlcov/
 dist/
 build/
 *.egg-info/
+
+registration-64a55-firebase-adminsdk-fbsvc-e0be139804.json
+

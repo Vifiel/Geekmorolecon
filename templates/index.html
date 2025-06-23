@@ -10,9 +10,9 @@
 
 <button class="rightbtn" id="Reg" onclick="openForm()">Войти</button>
 <div class="form-popup" id="regForm">
-    <form class="form-container">
+    <form class="form-container" method="POST" action="/register">
         <label for="email"><b>Email</b></label>
-        <input type="text" placeholder="Введите email" name="email" required>
+        <input type="email" placeholder="Введите email" name="email" required>
  
         <label for="pswd"><b>Пароль</b></label>
         <input type="password" placeholder="Введите пароль" name="pswd" required>
