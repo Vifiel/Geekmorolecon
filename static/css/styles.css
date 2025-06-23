@@ -2,8 +2,8 @@
 
 
 .rightbtn{
-    top:0px;
-    right:0px;
+    top:5px;
+    right:5px;
     width:200;
     height:100;
     position:fixed;
@@ -59,4 +59,66 @@
 /* Add some hover effects to buttons */
 .form-container .subbtn:hover, .rightbtn:hover {
   opacity: 1;
+}
+
+
+.regbtn {
+display: inline-block;
+height: 40;
+width: 120;
+padding: 10px 10px;
+background-color: #F77E7E;
+color: white;
+text-decoration: none;
+border-radius: 4px;
+font-family: Arial, sans-serif;
+font-size: 16px;
+}
+
+.sec1 {
+display: inline-block;
+height: 70;
+width: 70;
+padding: 10px 10px;
+background-color: #F77E7E;
+color: white;
+text-decoration: none;
+border-radius: 4px;
+font-family: Arial, sans-serif;
+font-size: 16px;
+}
+
+.sec1dropdown {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.sec2 {
+display: inline-block;
+height: 70;
+width: 70;
+padding: 10px 10px;
+background-color: #F77E7E;
+color: white;
+text-decoration: none;
+border-radius: 4px;
+font-family: Arial, sans-serif;
+font-size: 16px;
+}
+
+.sec3 {
+display: inline-block;
+height: 70;
+width: 70;
+padding: 10px 10px;
+background-color: #F77E7E;
+color: white;
+text-decoration: none;
+border-radius: 4px;
+font-family: Arial, sans-serif;
+font-size: 16px;
 }
