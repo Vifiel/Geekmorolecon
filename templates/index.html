@@ -6,7 +6,7 @@
 <body>
 
 
-<button class="rightbtn" id="Enter">Войти</button>
+<button class="signin-btn" id="Enter">Войти</button>
 
 <div class="form-popup" id=EnterForm>
     <form class="form-container" method="POST" id="enterForm">
@@ -25,20 +25,6 @@
 </div>
 
 
-<h1 style="text-align: center; vertical-align: middle;">Здесь могло бы быть наше название</h1>
-
-<p>
-    <em>
-        <span style="text-decoration: underline;">Кто мы?</span><br />
-    </em>
-</p>
-
-<p><em>Пока не знаем, но здесь могло бы быть ваше описание. Хочешь к нам? Скорее регистрируйся&nbsp;&darr;</em></p>
-<p>&nbsp;</p>
-
-
-<button class="regbtn" id="Registration">Регистрация</button>
-
 <div class="form-popup" id="RegForm">
     <form id=regForm class="form-container" method="POST" action="/register">
 
@@ -47,29 +33,66 @@
 
         <label for="email"><b>Email</b></label>
         <input type="email" placeholder="Введите email" name="email" required>
- 
+
         <label for="password"><b>Пароль</b></label>
         <input type="password" placeholder="Введите пароль" name="password" required>
 
 
-        <button type="submit" class="subbtn">Зарегестрироваться</button>
+        <button type="submit" class="subbtn">Зарегистрироваться</button>
         <button type="button" class="btnclose" id="RegClose">Закрыть</button>
     </form>
 </div>
 
 
-<br />
+<!--главная часть страницы -->
 
-<div class="dropdown">
-    <button class="sec1" id="Section1">Секция 1</button>
-    <div class="sec1dropdown">
-        <p>Описание</p>
+<div class="center-container">
+    <h1 style="text-align: center; vertical-align: middle;">Здесь могло бы быть наше название</h1>
+
+    <p>
+        <em>
+            <span style="text-decoration: underline;">Кто мы?</span><br />
+        </em>
+    </p>
+
+    <p><em>Пока не знаем, но здесь могло бы быть ваше описание. Хочешь к нам? Скорее регистрируйся&nbsp;&darr;</em></p>
+    <p>&nbsp;</p>
+
+
+    <button class="regbtn" id="Registration">Регистрация</button>
+
+    <br />
+    
+    <!-- кнопки секций -->
+    <div class="section-row">
+        <div class="dropdown">
+            <button class="section-btn dropdown-btn">Секция 1</button>
+            <div class="dropdown-content">
+                <p>Описание 1</p>
+                <button class="section-btn">Записаться</button>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="section-btn dropdown-btn">Секция 2</button>
+            <div class="dropdown-content">
+                <p>Описание 2</p>
+                <button class="section-btn">Записаться</button>
+            </div>
+        </div>
+
+        <div class="dropdown">
+            <button class="section-btn dropdown-btn">Секция 3</button>
+            <div class="dropdown-content">
+                <p>Описание 3</p>
+                <button class="section-btn">Записаться</button>
+            </div>
+        </div>
+
     </div>
+
 </div>
 
-<button class="sec2" id="Section2">Секция 2</button>
-
-<button class="sec3" id="Section3">Секция 3</button>
 
 <script src="{{url_for('static', filename='js/sc.js')}}"></script>
 </body>
