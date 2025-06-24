@@ -1,14 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from back.user import User, UserData
+from back.section import Section
+from database import init_db
 import firebase_admin
-from classes import User, UserData
 from firebase_admin import credentials, firestore
 
-cred = credentials.Certificate("registration-64a55-firebase-adminsdk-fbsvc-e0be139804.json")
-firebase_admin.initialize_app(cred)
+#cred = credentials.Certificate("registration-64a55-firebase-adminsdk-fbsvc-e0be139804.json")
+#firebase_admin.initialize_app(cred)
 
-db = firestore.client()
+#db = firestore.client()
 
 app = Flask("Reg")
 
@@ -31,9 +31,9 @@ def enter():
     form_data = request.get_json()
 
     current_user = User(form_data["email"], form_data["password"])
-    user_data = db.collection("users").document(current_user.email).get()
+    user_data = init_db.db.collection("users").document(current_user.email).get()
     is_exist = user_data.exists 
-    is_pass_match = user_data.get("password") == current_user.password 
+    is_pass_match = user_data.get("password") == current_user.password
     respond = jsonify({"exists": user_data.exists, "passMatch": is_pass_match})
     
     if not is_exist:
@@ -44,6 +44,15 @@ def enter():
         return respond
     else:
         return respond
+
+@app.route("/createSectionForm", methods=["POST"])
+def createSection():
+    form_data = request.form.to_dict()
+
+    current_section = Section(form_data)
+    current_section.post()
+
+    return redirect(url_for("main"))
 
 if __name__ == "__main__":
     app.run()

@@ -1,5 +1,5 @@
 import hashlib
-
+from database import init_db
 
 class User:
     def __init__(self, email, password):
@@ -14,5 +14,5 @@ class UserData(User):
         self.data["isAdmin"] = False
 
     def post(self):
-        db.collection("users").document(self.email).set(self.data)
+        init_db.db.collection("users").document(self.email).set(self.data)
 
