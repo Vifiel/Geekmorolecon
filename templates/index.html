@@ -2,15 +2,45 @@
 <html>
 <head>
    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
-   <script src="{{url_for('static', filename='js/scripts.js')}}"></script>
 </head>
 <body>
 
 
+<button class="rightbtn" id="Enter">Войти</button>
 
-<button class="rightbtn" id="Enter" >Войти</button>
-<div class="form-popup" id="regForm">
-    <form class="form-container" method="POST" action="/register">
+<div class="form-popup" id=EnterForm>
+    <form class="form-container" method="POST" id="enterForm">
+        <label for="email"><b>Email</b></label>
+        <input type="email" placeholder="Введите email" name="email" id="email" required>
+
+        <p id="error"></p>
+
+        <label for="password"><b>Пароль</b></label>
+        <input type="password" placeholder="Введите пароль" name="password" id="password" required>
+
+
+        <button type="submit" class="subbtn">Войти</button>
+        <button type="button" class="btnclose" id="EnterClose">Закрыть</button>
+    </form>
+</div>
+
+
+<h1 style="text-align: center; vertical-align: middle;">Здесь могло бы быть наше название</h1>
+
+<p>
+    <em>
+        <span style="text-decoration: underline;">Кто мы?</span><br />
+    </em>
+</p>
+
+<p><em>Пока не знаем, но здесь могло бы быть ваше описание. Хочешь к нам? Скорее регистрируйся&nbsp;&darr;</em></p>
+<p>&nbsp;</p>
+
+
+<button class="regbtn" id="Registration">Регистрация</button>
+
+<div class="form-popup" id="RegForm">
+    <form id=regForm class="form-container" method="POST" action="/register">
 
         <label for="name"><b>Имя</b></label>
         <input type="text" placeholder="Введите ваше имя" name="name" required>
@@ -22,23 +52,12 @@
         <input type="password" placeholder="Введите пароль" name="password" required>
 
 
-        <button type="submit" class="subbtn">Войти</button>
-        <button type="button" class="btnclose" onclick="closeForm()">Закрыть</button>
+        <button type="submit" class="subbtn">Зарегестрироваться</button>
+        <button type="button" class="btnclose" id="RegClose">Закрыть</button>
     </form>
 </div>
 
 
-<h1 style="text-align: center; vertical-align: middle;">Здесь могло бы быть наше название</h1>
-<p><em><span
-        style="text-decoration: underline;">Кто мы?</span><br />
-</em>
-</p>
-<p><em>Пока не знаем, но здесь могло бы быть ваше описание. Хочешь к нам? Скорее регистрируйся&nbsp;&darr;</em></p>
-<p>&nbsp;</p>
-
-
-<button class="regbtn" id="Registration" onclick="openForm()">Регистрация</button>
-<div class="Registration"></div>
 <br />
 
 <div class="dropdown">
@@ -52,5 +71,6 @@
 
 <button class="sec3" id="Section3">Секция 3</button>
 
+<script src="{{url_for('static', filename='js/sc.js')}}"></script>
 </body>
 </html>
