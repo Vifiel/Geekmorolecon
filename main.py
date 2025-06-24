@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import hashlib
 import firebase_admin
+from classes import User, UserData
 from firebase_admin import credentials, firestore
 
 cred = credentials.Certificate("registration-64a55-firebase-adminsdk-fbsvc-e0be139804.json")
@@ -12,10 +12,8 @@ db = firestore.client()
 
 app = Flask("Reg")
 
-class User:
-    def __init__(self, email, password):
-        self.password = hashlib.sha256(password.encode("utf-8")).hexdigest()
-        self.email = email
+current_user = None
+
     
 
 class UserData(User):
@@ -30,9 +28,9 @@ class UserData(User):
         
 
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def main():
-    return render_template("index.html")
+    return render_template("index.html", form_open=False)
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -40,6 +38,21 @@ def register():
     user = UserData(form_data)
     user.post()
     return redirect(url_for("main"))
+
+@app.route("/enter", methods=["POST"])
+def enter():
+    form_data = request.get_json()
+
+    current_user = User(form_data["email"], form_data["password"])
+    user_data = db.collection("users").document(current_user.email).get()
+    
+    if not user_data.exists:
+        current_user = None
+        return jsonify({"exists": user_data.exists}) 
+    else:
+        return jsonify({"exists": user_data.exists}) 
+    
+
 
 if __name__ == "__main__":
     app.run()
