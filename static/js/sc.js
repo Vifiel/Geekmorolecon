@@ -8,9 +8,20 @@ document.addEventListener("DOMContentLoaded", function () {
   const regCloseBtn = document.getElementById("RegClose");
   const enterCloseBtn = document.getElementById("EnterClose");
 
+  document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      const dropdownContent = btn.parentElement.querySelector('.dropdown-content');
+      if (dropdownContent) {
+        dropdownContent.style.display = dropdownContent.style.display === "block" ? "none" : "block";
+      }
+    });
+  });
+
+
   if (registrationBtn && regForm) {
     registrationBtn.addEventListener("click", function () {
       regForm.style.display = "block";
+      if (EnterForm) EnterForm.style.display = "none";
     });
   }
 
@@ -23,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function () {
   if (enterBtn && EnterForm) {
     enterBtn.addEventListener("click", function () {
       EnterForm.style.display = "block";
+      if (regForm) regForm.style.display = "none";
     });
   }
 

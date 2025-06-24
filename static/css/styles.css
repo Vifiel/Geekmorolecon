@@ -1,12 +1,29 @@
 {box-sizing: border-box}
 
 
-.rightbtn{
+.center-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; 
+    text-align: center;
+}
+
+/* кнопка входа */
+.signin-btn{
     top:5px;
     right:5px;
     width:200;
     height:100;
-    position:fixed;
+    border: none;
+    position: fixed;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.signin-btn:hover {
+    background-color: #d95c5c;
 }
 
 .form-popup {
@@ -25,21 +42,26 @@
 }
 
 
-.form-container input[type=text], .form-container input[type=password], .form-container input[type=email] {
+.form-container input[type=text], 
+.form-container input[type=password], 
+.form-container input[type=email] {
   width: 100%;
   padding: 15px;
   margin: 5px 0 22px 0;
   border: none;
   background: #f1f1f1;
+  box-sizing: border-box;
 }
 
-/* When the inputs get focus, do something */
-.form-container input[type=text]:focus, .form-container input[type=password]:focus {
+
+.form-container input[type=text]:focus, 
+.form-container input[type=password]:focus,
+.form-container input[type=email]:focus {
   background-color: #ddd;
   outline: none;
 }
 
-/* Set a style for the submit/login button */
+
 .form-container .btn {
   background-color: #04AA6D;
   color: white;
@@ -51,17 +73,17 @@
   opacity: 0.8;
 }
 
-/* Add a red background color to the cancel button */
+
 .form-container .btnclose {
   background-color: red;
 }
 
-/* Add some hover effects to buttons */
-.form-container .subbtn:hover, .rightbtn:hover {
+
+.form-container .subbtn:hover, .signin-btn:hover {
   opacity: 1;
 }
 
-
+/* кнопка регистрации */
 .regbtn {
 display: inline-block;
 height: 40;
@@ -71,54 +93,60 @@ background-color: #F77E7E;
 color: white;
 text-decoration: none;
 border-radius: 4px;
+border: none;
 font-family: Arial, sans-serif;
 font-size: 16px;
+cursor: pointer;
+transition: background 0.2s;
 }
 
-.sec1 {
-display: inline-block;
-height: 70;
-width: 70;
-padding: 10px 10px;
-background-color: #F77E7E;
-color: white;
-text-decoration: none;
-border-radius: 4px;
-font-family: Arial, sans-serif;
-font-size: 16px;
+.regbtn:hover {
+    background-color: #d95c5c;
 }
 
-.sec1dropdown {
+
+/* контейнер кнопок в горизонтальный ряд */
+.section-row {
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+}
+
+/* кнопки секций */
+.section-btn {
+    display: inline-block;
+    height: 50px;
+    width: 120px;
+    padding: 10px;
+    background-color: #F77E7E;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.section-btn:hover {
+    background-color: #d95c5c;
+}
+
+/* выкидной текст */
+.dropdown-content {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
+    padding: 16px;
 }
 
-.sec2 {
-display: inline-block;
-height: 70;
-width: 70;
-padding: 10px 10px;
-background-color: #F77E7E;
-color: white;
-text-decoration: none;
-border-radius: 4px;
-font-family: Arial, sans-serif;
-font-size: 16px;
-}
-
-.sec3 {
-display: inline-block;
-height: 70;
-width: 70;
-padding: 10px 10px;
-background-color: #F77E7E;
-color: white;
-text-decoration: none;
-border-radius: 4px;
-font-family: Arial, sans-serif;
-font-size: 16px;
+.dropdown-content p {
+    margin-bottom: 12px; 
+    text-align: center;   
 }
