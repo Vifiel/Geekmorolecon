@@ -1,11 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
-  // Кнопка "Регистрация" — открывает форму
+
   const registrationBtn = document.getElementById("Registration");
-  const enterBtn = document.getElementById("Enter");
+  const regCloseBtn = document.getElementById("RegClose");
   const regForm = document.getElementById("RegForm");
+
+  const enterBtn = document.getElementById("Enter");
   const EnterForm = document.getElementById("EnterForm");
   const enterForm = document.getElementById("enterForm");
-  const regCloseBtn = document.getElementById("RegClose");
   const enterCloseBtn = document.getElementById("EnterClose");
 
   document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
@@ -60,10 +61,12 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(response => response.json())
         .then(data => {
-        if (data.exists) {
-            EnterForm.style.display = "none";
+        if (!data.exists) {
+            document.getElementById("NotInDatabase").textContent = "Пользователь не найден.";
+        } else if (!data.passMatch){
+            document.getElementById("UnmatchedPasswords").textContent = "Неверный пароль";
         } else {
-            document.getElementById("error").textContent = "Пользователь не найден.";
+            EnterForm.style.display = "none";
         }
         })
       console.log("Форма отправлена!");
