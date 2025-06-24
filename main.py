@@ -14,19 +14,6 @@ app = Flask("Reg")
 
 current_user = None
 
-    
-
-class UserData(User):
-    def __init__(self, data):
-        self.data = data
-        super().__init__(data["email"], data["password"])
-        self.data["password"] = self.password
-        self.data["isAdmin"] = False
-
-    def post(self):
-        db.collection("users").document(self.email).set(self.data)
-        
-
 
 @app.route("/", methods=["POST", "GET"])
 def main():
@@ -45,14 +32,18 @@ def enter():
 
     current_user = User(form_data["email"], form_data["password"])
     user_data = db.collection("users").document(current_user.email).get()
+    is_exist = user_data.exists 
+    is_pass_match = user_data.get("password") == current_user.password 
+    respond = jsonify({"exists": user_data.exists, "passMatch": is_pass_match})
     
-    if not user_data.exists:
+    if not is_exist:
         current_user = None
-        return jsonify({"exists": user_data.exists}) 
+        return  respond
+    elif not is_pass_match:
+        current_user = None
+        return respond
     else:
-        return jsonify({"exists": user_data.exists}) 
-    
-
+        return respond
 
 if __name__ == "__main__":
     app.run()
