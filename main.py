@@ -1,8 +1,8 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-import hashlib
 import firebase_admin
+from classes import User, UserData
 from firebase_admin import credentials, firestore
 
 cred = credentials.Certificate("registration-64a55-firebase-adminsdk-fbsvc-e0be139804.json")
@@ -14,10 +14,6 @@ app = Flask("Reg")
 
 current_user = None
 
-class User:
-    def __init__(self, email, password):
-        self.password = hashlib.sha256(password.encode("utf-8")).hexdigest()
-        self.email = email
     
 
 class UserData(User):
