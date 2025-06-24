@@ -20,6 +20,7 @@ class User:
 
 class UserData(User):
     def __init__(self, data):
+        self.data = data
         super().__init__(data["email"], data["password"])
         self.data["password"] = self.password
         self.data["isAdmin"] = False
@@ -37,6 +38,7 @@ def main():
 def register():
     form_data = request.form.to_dict()
     user = UserData(form_data)
+    user.post()
     return redirect(url_for("main"))
 
 if __name__ == "__main__":
