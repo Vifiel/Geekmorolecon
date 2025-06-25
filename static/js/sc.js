@@ -101,6 +101,8 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("UnmatchedPasswords").textContent = "Неверный пароль";
         } else {
             enterForm.reset()
+            registrationBtn.style.display = "none";
+            enterBtn.style.display = "none";
             EnterForm.style.display = "none";
         }
         })
