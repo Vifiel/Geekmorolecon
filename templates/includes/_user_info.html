@@ -1,0 +1,34 @@
+<div class="user-info">
+    <h2>Данные пользователя</h2>
+    <p><strong>ID:</strong> {{ user.id }}</p>
+    <p><strong>Имя:</strong> {{ user.first_name }}</p>
+    <p><strong>Фамилия:</strong> {{ user.last_name }}</p>
+    <p><strong>Почта:</strong> {{ user.email }}</p>
+    <p><strong>Пароль:</strong> <span class="password-display">{{ '*' * user.password|length }}</span></p>
+
+    <button onclick="showEditForm('userEditForm')">Редактировать данные</button>
+
+    <div id="userEditForm" class="edit-form">
+        <h3>Редактирование данных</h3>
+        <form method="POST" action="{{ url_for('update_user') }}">
+            <input type="hidden" name="id" value="{{ user.id }}">
+
+            <label for="first_name">Имя:</label>
+            <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+
+            <label for="last_name">Фамилия:</label>
+            <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
+
+            <label for="email">Почта:</label>
+            <input type="email" id="email" name="email" value="{{ user.email }}" required>
+
+            <label for="password">Новый пароль:</label>
+            <input type="password" id="password" name="password" placeholder="Оставьте пустым, чтобы не менять">
+
+            <div class="action-buttons">
+                <button type="submit">Сохранить</button>
+                <button type="button" onclick="hideEditForm('userEditForm')">Отмена</button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,278 @@
+{box-sizing: border-box}
+
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+    padding-top: 60px; 
+}
+
+/* применяем шрифт ко всем элементам */
+* {
+    font-family: 'TT Mussels';
+}
+
+/* шапка сайта */
+.fixed-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: #F77E7E;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    font-size: 20px;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 0 32px;
+    flex-wrap: wrap; 
+    box-sizing: border-box;
+}
+
+.header-title {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.header-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.fixed-btn {
+    position: fixed;
+    top: 70px; /* ниже высоты .fixed-header */
+    right: 25px; 
+    z-index: 1001; 
+}
+
+.center-container {
+    margin-top: -60px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; 
+    text-align: center;
+}
+
+
+.signin-btn:hover {
+    background-color: #d95c5c;
+}
+
+.form-popup {
+  display: none;
+  position: fixed;
+  bottom: 0;
+  right: 15px;
+  border: 3px solid #f1f1f1;
+  z-index: 9;
+}
+
+.form-container {
+  max-width: 300px;
+  padding: 10px;
+  background-color: white;
+}
+
+
+.form-container input[type=text], 
+.form-container input[type=password], 
+.form-container input[type=email],
+.form-container input[type=description],
+.form-container input[type=counter] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  border: none;
+  background: #f1f1f1;
+  box-sizing: border-box;
+}
+
+
+.form-container input[type=text]:focus, 
+.form-container input[type=password]:focus,
+.form-container input[type=email]:focus,
+.form-container input[type=description]:focus,
+.form-container input[type=counter]:focus{
+  background-color: #ddd;
+  outline: none;
+}
+
+
+.form-container .btn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom:10px;
+  opacity: 0.8;
+}
+
+
+.form-container .btnclose {
+  background-color: red;
+}
+
+
+.form-container .subbtn:hover, .signin-btn:hover {
+  opacity: 1;
+}
+
+/* кнопка регистрации */
+.funcbtn {
+display: inline-block;
+height: 40;
+width: 120;
+padding: 10px 10px;
+background-color: #F77E7E;
+color: white;
+text-decoration: none;
+border-radius: 4px;
+border: none;
+font-family: Arial, sans-serif;
+font-size: 16px;
+cursor: pointer;
+transition: background 0.2s;
+}
+
+.regbtn:hover {
+    background-color: #d95c5c;
+}
+
+
+/* кнопки секций */
+.section-btn {
+    display: inline-block;
+    height: 50px;
+    width: 120px;
+    padding: 10px;
+    background-color: #F77E7E;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.section-btn:hover {
+    background-color: #d95c5c;
+}
+
+
+
+.to-sections-btn {
+    background: #F77E7E;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 16px;
+    transition: background 0.2s;
+}
+.to-sections-btn:hover {
+    background: #d95c5c;
+}
+
+/* выкидной текст */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    padding: 16px;
+}
+
+.dropdown-content p {
+    margin-bottom: 12px; 
+    text-align: center;   
+}
+
+.cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    align-items: flex-start;
+    margin: 40px auto 0 auto;
+    max-width: 1200px;
+}
+
+#sections.cards-container {
+    min-height: 100vh;
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    align-items: center;
+}
+
+.card {
+    position: relative;
+    flex: 0 0 300px;
+    min-width: 250px;
+    max-width: 300px;
+    min-width: 250px;
+    margin: 0;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    align-items: center;
+    padding: 15px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    display: flex;             
+    flex-direction: column;     
+    justify-content: center;   
+    text-align: center;         
+}
+
+.card:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 15px;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    z-index: 10;
+}
+
+.card:hover .dropdown-content {
+    display: block;
+}
+
+.enroll-btn {
+    margin-top: 12px;
+    width: 100%;
+}
+
+.no-data {
+    width: 100%;
+    text-align: center;
+    padding: 20px;
+    color: #777;
+}
