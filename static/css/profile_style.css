@@ -224,6 +224,14 @@ table td:nth-child(3) {
     border-bottom: 1px solid #e0e0e0;
 }
 
+
+.user-info-value,
+.entries-table td {
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
 .action-buttons {
     display: flex;
     gap: 8px;
