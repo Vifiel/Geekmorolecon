@@ -12,7 +12,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.route('/', methods=["POST", "GET"], methods=["POST", "GET"])
+@app.route('/', methods=["POST", "GET"])
 def display_data():
     try:
         users_ref = db.collection('section')
@@ -55,13 +55,11 @@ user_entries = [
 @login_required
 def account():
     # Получаем данные пользователя из Firestore
-    # Получаем данные пользователя из Firestore
     user_data = db.collection("users").document(current_user.email).get()
     user_dict = user_data.to_dict() or {}
 
     # Получаем записи пользователя 
     entries_ref = db.collection("entries").where("user_email", "==", current_user.email).stream()
-    entries = [entry.to_dict() | {"id": entry.id} for entry in entries_ref]
     entries = [entry.to_dict() | {"id": entry.id} for entry in entries_ref]
 
     return render_template(
@@ -70,6 +68,9 @@ def account():
         entries=entries
     )
 
+
+# filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
+@app.route('/update-user', methods=['POST'])
 
 # filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
 @app.route('/update-user', methods=['POST'])
@@ -123,9 +124,8 @@ def add_entry():
     })
     return redirect(url_for('index'))
 
-    return redirect(url_for('index'))
 
-
+@app.route('/update-entry/<int:entry_id>', methods=['POST'])
 @app.route('/update-entry/<int:entry_id>', methods=['POST'])
 def update_entry(entry_id):
     for entry in user_entries:
@@ -135,9 +135,21 @@ def update_entry(entry_id):
             break
     return redirect(url_for('index'))
 
+    for entry in user_entries:
+        if entry['id'] == entry_id:
+            entry['title'] = request.form['title']
+            entry['content'] = request.form['content']
+            break
+    return redirect(url_for('index'))
+
 
 @app.route('/delete-entry/<int:entry_id>', methods=['POST'])
+@app.route('/delete-entry/<int:entry_id>', methods=['POST'])
 def delete_entry(entry_id):
+    global user_entries
+    user_entries = [e for e in user_entries if e['id'] != entry_id]
+    return redirect(url_for('index'))
+
     global user_entries
     user_entries = [e for e in user_entries if e['id'] != entry_id]
     return redirect(url_for('index'))
