@@ -1,7 +1,4 @@
-from database import init_db
-
-db = init_db.db
-
+from database.init_db import db
 
 class Section:
 

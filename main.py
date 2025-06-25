@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from back.user import User, UserData
 from back.section import Section
-from database import init_db
+from database.init_db import db
 
 app = Flask("Reg")
 
@@ -13,7 +13,7 @@ login_manager.init_app(app)
 @app.route('/')
 def display_data():
     try:
-        users_ref = init_db.db.collection('section')
+        users_ref = db.collection('section')
         docs = users_ref.stream()
         data = []
 
@@ -23,7 +23,7 @@ def display_data():
 
         is_admin = False
         if current_user.is_authenticated:
-            user_data = init_db.db.collection("users").document(current_user.email).get()
+            user_data = db.collection("users").document(current_user.email).get()
             is_admin = user_data.get("isAdmin", False)
 
         return render_template('index.html', data=data, is_admin=is_admin)
@@ -40,7 +40,7 @@ def register():
     form_data = request.get_json()
     user = UserData(form_data)
 
-    db_user = init_db.db.collection("users").document(user.data["email"]).get()
+    db_user = db.collection("users").document(user.data["email"]).get()
     respond = jsonify({"exists": db_user.exists})
 
     if db_user.exists:
@@ -54,7 +54,7 @@ def enter():
     form_data = request.get_json()
 
     user = User(form_data["email"], form_data["password"])
-    user_data = init_db.db.collection("users").document(user.email).get()
+    user_data = db.collection("users").document(user.email).get()
     is_exist = user_data.exists 
     is_pass_match = user_data.get("password") == user.password
     respond = jsonify({"exists": user_data.exists, "passMatch": is_pass_match})
@@ -71,7 +71,7 @@ def createSection():
     if not current_user.is_authenticated:
         return "Пожалуйста, войдите в систему", 401
 
-    user_data = init_db.db.collection("users").document(current_user.email).get()
+    user_data = db.collection("users").document(current_user.email).get()
     if not user_data.get("isAdmin", False):
         return "Доступ запрещён", 403
     
