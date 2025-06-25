@@ -17,21 +17,12 @@ def display_data():
     try:
         users_ref = db.collection('section')
         docs = users_ref.stream()
-        data = []
+        data = [doc.to_dict() for doc in docs]
 
-        for doc in docs:
-            doc_data = doc.to_dict()
-            data.append(doc_data)
+        print(current_user.isAdmin, current_user.is_authenticated)
 
-        is_admin = False
-        is_authenticated = False
-        if current_user.is_authenticated:
-            is_authenticated = True
-            user_data = db.collection("users").document(current_user.email).get()
-            user_dict = user_data.to_dict() or {}
-            is_admin = user_dict.get("isAdmin", False)
-
-        return render_template('index.html', data=data, is_admin=is_admin, is_authenticated=is_authenticated)
+        return render_template('index.html', data=data, 
+                               is_admin=getattr(current_user, 'isAdmin', False), is_authenticated=current_user.is_authenticated)
 
     except Exception as e:
         return f"Ошибка получения данных: {str(e)}", 500
@@ -131,7 +122,7 @@ def enter():
     else:
         user = User(
             form_data["email"],
-            password_hash,
+            user_dict.get("password"),
             is_admin=user_dict.get('isAdmin', False)
         )
         # login_user(current_user)
@@ -140,9 +131,6 @@ def enter():
 
 @app.route("/createSection", methods=["POST"])
 def createSection():
-    
-    if not current_user.is_authenticated:
-        return "Пожалуйста, войдите в систему", 401
 
     user_data = db.collection("users").document(current_user.email).get()
     if not user_data.get("isAdmin", False):
@@ -160,7 +148,7 @@ def createSection():
         current_section.update(form_data)
         print('данные обновлены')
 
-    return redirect(url_for("main"))
+    return redirect(url_for("display_data"))
 
 @app.route("/entryToSection", methods=["POST"])
 def entryToSection():
@@ -182,13 +170,13 @@ def entryToSection():
     else:
         print('please log in')
 
-    return redirect(url_for("main"))
+    return redirect(url_for("display_data"))
 
 @app.route("/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("main"))
+    return redirect(url_for("display_data"))
 
 
 @login_manager.user_loader
