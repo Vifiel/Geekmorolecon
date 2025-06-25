@@ -2,7 +2,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   const registrationBtn = document.getElementById("Registration");
   const regCloseBtn = document.getElementById("RegClose");
-  const regForm = document.getElementById("RegForm");
+  const RegForm = document.getElementById("RegForm");
+  const regForm = document.getElementById("regForm");
 
   const enterBtn = document.getElementById("Enter");
   const EnterForm = document.getElementById("EnterForm");
@@ -26,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
     createSectionBtn.addEventListener("click", function () {
       createSectionForm.style.display = "block";
       if (EnterForm) EnterForm.style.display = "none";
-      if (regForm) regForm.style.display = "none";
+      if (regForm) RegForm.style.display = "none";
     });
   }
 
@@ -37,9 +38,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
 
-  if (registrationBtn && regForm) {
+  if (registrationBtn && RegForm) {
     registrationBtn.addEventListener("click", function () {
-      regForm.style.display = "block";
+      RegForm.style.display = "block";
       if (EnterForm) EnterForm.style.display = "none";
       if (CreateSectionForm) createSectionForm.style.display = "none";
     });
@@ -47,14 +48,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (regCloseBtn){
     regCloseBtn.addEventListener("click", function () {
-      regForm.style.display = "none";
+      RegForm.style.display = "none";
     });
   }
 
   if (enterBtn && EnterForm) {
     enterBtn.addEventListener("click", function () {
       EnterForm.style.display = "block";
-      if (regForm) regForm.style.display = "none";
+      if (RegForm) RegForm.style.display = "none";
       if (CreateSectionForm) createSectionForm.style.display = "none"
     });
   }
@@ -89,7 +90,32 @@ document.addEventListener("DOMContentLoaded", function () {
             EnterForm.style.display = "none";
         }
         })
-      console.log("Форма отправлена!");
+    });
+  }
+
+  if (regForm) {
+      regForm.addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const email = document.getElementById("regEmail").value;
+        const password = document.getElementById("regPassword").value;
+        const name = document.getElementById("name").value;
+
+        fetch("/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ email: email, password: password, name: name })
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.exists) {
+            document.getElementById("InDatabase").textContent = "Пользователь уже зарегестрирован";
+        } else {
+            RegForm.style.display = "none";
+        }
+        })
     });
   }
 });

@@ -2,13 +2,6 @@ from flask import Flask, render_template, request, redirect, url_for, jsonify
 from back.user import User, UserData
 from back.section import Section
 from database import init_db
-import firebase_admin
-from firebase_admin import credentials, firestore
-
-#cred = credentials.Certificate("registration-64a55-firebase-adminsdk-fbsvc-e0be139804.json")
-#firebase_admin.initialize_app(cred)
-
-#db = firestore.client()
 
 app = Flask("Reg")
 
@@ -21,10 +14,17 @@ def main():
 
 @app.route("/register", methods=["POST"])
 def register():
-    form_data = request.form.to_dict()
+    form_data = request.get_json()
     user = UserData(form_data)
-    user.post()
-    return redirect(url_for("main"))
+
+    db_user = init_db.db.collection("users").document(user.data["email"]).get()
+    respond = jsonify({"exists": db_user.exists})
+
+    if db_user.exists:
+        return respond
+    else:
+        user.post()
+        return respond
 
 @app.route("/enter", methods=["POST"])
 def enter():
