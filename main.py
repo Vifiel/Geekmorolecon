@@ -36,20 +36,6 @@ def display_data():
     except Exception as e:
         return f"Ошибка получения данных: {str(e)}", 500
 
-# Записи пользователя (временное хранилище)
-user_entries = [
-    {'id': 1, 'title': 'Тест1', 'content': 'Текстовый тест'},
-    {'id': 2, 'title': 'Тест2', 'content': 'Текстовый текст'},
-    {'id': 3, 'title': 'Тест3', 'content': 'Тестовый тест'}
-]
-
-# Записи пользователя (временное хранилище)
-user_entries = [
-    {'id': 1, 'title': 'Тест1', 'content': 'Текстовый тест'},
-    {'id': 2, 'title': 'Тест2', 'content': 'Текстовый текст'},
-    {'id': 3, 'title': 'Тест3', 'content': 'Тестовый тест'}
-]
-
 
 @app.route("/account")
 @login_required
@@ -69,11 +55,6 @@ def account():
     )
 
 
-# filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
-@app.route('/update-user', methods=['POST'])
-
-# filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
-@app.route('/update-user', methods=['POST'])
 
 # filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
 @app.route('/update-user', methods=['POST'])
@@ -109,45 +90,26 @@ def update_user():
     return redirect(url_for('account'))
 
 
-@app.route('/add-entry', methods=['POST'])
-def add_entry():
-    new_id = max([e['id'] for e in user_entries], default=0) + 1
-    user_entries.append({
-        'id': new_id,
-        'title': request.form['title'],
-        'content': request.form['content']
-    })
-    return redirect(url_for('index'))
-
-
-@app.route('/update-entry/<int:entry_id>', methods=['POST'])
-@app.route('/update-entry/<int:entry_id>', methods=['POST'])
+@app.route('/update-entry/<entry_id>', methods=['POST'])
+@login_required
 def update_entry(entry_id):
-    for entry in user_entries:
-        if entry['id'] == entry_id:
-            entry['title'] = request.form['title']
-            entry['content'] = request.form['content']
-            break
-    return redirect(url_for('index'))
-
-    for entry in user_entries:
-        if entry['id'] == entry_id:
-            entry['title'] = request.form['title']
-            entry['content'] = request.form['content']
-            break
-    return redirect(url_for('index'))
+    form_data = request.form.to_dict()
+    entry_ref = db.collection("entries").document(entry_id)
+    entry_ref.update({
+        "title": form_data["title"],
+        "content": form_data["content"]
+    })
+    return redirect(url_for('account'))
 
 
-@app.route('/delete-entry/<int:entry_id>', methods=['POST'])
-@app.route('/delete-entry/<int:entry_id>', methods=['POST'])
+@app.route('/delete-entry/<entry_id>', methods=['POST'])
+@login_required
 def delete_entry(entry_id):
-    global user_entries
-    user_entries = [e for e in user_entries if e['id'] != entry_id]
-    return redirect(url_for('index'))
+    entry_ref = db.collection("entries").document(entry_id)
+    entry_ref.delete()
+    return redirect(url_for('account'))
 
-    global user_entries
-    user_entries = [e for e in user_entries if e['id'] != entry_id]
-    return redirect(url_for('index'))
+
 
 
 
