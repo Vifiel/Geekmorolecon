@@ -7,7 +7,7 @@ class Section:
         self.name = data['name']
         self.description = data['description']
         self.counter = data['counter']
-        data['users'] = None
+        data['users'] = []
         self.users = data['users']
 
         #self.user_data = user_data
