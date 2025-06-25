@@ -1,7 +1,8 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from back.user import User, UserData
 from back.section import Section
+from back.create_table import import_data_to_file
 from database.init_db import db
 
 app = Flask("Reg")
@@ -117,6 +118,10 @@ def load_user(user_id):
     # user_id - это email
     return User.get(user_id)
 
+@app.route("/download")
+def download():
+    import_data_to_file()
+    return send_file("static/files/registredUsers.xlsx", as_attachment=True)
 
 if __name__ == "__main__":
     app.run()
