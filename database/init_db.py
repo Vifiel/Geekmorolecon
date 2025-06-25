@@ -2,13 +2,11 @@ import firebase_admin
 from firebase_admin import firestore
 import os
 import tempfile
+from dotenv import load_dotenv
 
 firebase_key = os.getenv("FIREBASE_KEY")
 
-if firebase_key:
-    pass
-else:
-    from dotenv import load_dotenv
+if not firebase_key:
     load_dotenv() 
 
     firebase_key = os.getenv("FIREBASE_KEY")
