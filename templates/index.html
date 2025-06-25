@@ -5,9 +5,17 @@
 </head>
 <body>
 
+<!-- плашка (шапка) сверху сайта -->
+<div class="fixed-header">
+    <span>Добро пожаловать на сайт!</span>
+    <button class="signin-btn" id="Enter">Войти</button>
+    <button class="exitbtn" id="exitBtn">Выйти</button>
+    
+</div>  
 
-<button class="signin-btn" id="Enter">Войти</button>
-<button class="exitbtn" id="exitBtn">Выйти</button>
+<button class="regbtn fixed-btn" id="createSection">Создать</button>
+
+
 
 <div class="form-popup" id=EnterForm>
     <form class="form-container" method="POST" id="enterForm">
@@ -47,7 +55,7 @@
     </form>
 </div>
 
-<button class="regbtn" id="createSection">Создать</button>
+
 
 <div class="form-popup" id="CreateSectionForm">
     <form id=createSectionForm class="form-container" method="POST" action="/createSection">

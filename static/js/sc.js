@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
         if (!data.exists) {
             email.value = "";
-            userNotFoundError.textContent = "Пользователь не найден.";
+            userNotFoundError.textContent = "Пользователь не найден";
         } else if (!data.passMatch){
             document.getElementById("UnmatchedPasswords").textContent = "Неверный пароль";
         } else {
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
         if (data.exists) {
             email.value = "";
-            alreadyRegistredError.textContent = "Пользователь уже зарегестрирован";
+            alreadyRegistredError.textContent = "Пользователь уже зарегистрирован";
         } else {
             regForm.reset()
             RegForm.style.display = "none";
