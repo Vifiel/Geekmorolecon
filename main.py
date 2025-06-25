@@ -37,8 +37,6 @@ def display_data():
         return f"Ошибка получения данных: {str(e)}", 500
 
 
-<<<<<<< Updated upstream
-=======
 # Данные пользователя (временное хранилище)
 user_data = {
     'id': 1,
@@ -56,8 +54,6 @@ user_entries = [
 ]
 
 
-
->>>>>>> Stashed changes
 @app.route("/account")
 @login_required
 def account():
@@ -65,7 +61,7 @@ def account():
     user_data = db.collection("users").document(current_user.email).get()
     user_dict = user_data.to_dict() or {}
 
-    # Получаем записи пользователя (пример: entries, если они есть)
+    # Получаем записи пользователя 
     entries_ref = db.collection("entries").where("user_email", "==", current_user.email).stream()
     entries = [entry.to_dict() | {"id": entry.id} for entry in entries_ref]
 
