@@ -145,5 +145,38 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     });
   }
+
+  function createNewCard() {
+                const inputText = userInput.value.trim();
+
+                // Создаем элемент карточки
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.id = cardId;
+
+                // Генерируем случайный цвет для карточки
+                const randomColor1 = getRandomColor();
+                const randomColor2 = getRandomColor();
+                card.style.background = `linear-gradient(135deg, ${randomColor1} 0%, ${randomColor2} 100%)`;
+
+                // Внутреннее содержимое карточки
+                card.innerHTML = `
+                    <div class="card-header">
+                        <div class="card-title">${truncateText(inputText, 20)}</div>
+                        <div class="card-description">${truncateText(inputText, 20)}</div>
+                        <div class="card-counter">${truncateText(inputText, 20)}</div>
+                        <div class="card-actions">
+                            <button class="action-btn" onclick="minimizeCard('${cardId}')">−</button>
+                            <button class="action-btn" onclick="closeCard('${cardId}')">×</button>
+                        </div>
+                    </div>
+                    <div class="card-content" id="content-${cardId}">${inputText}</div>
+                    <div class="card-footer">
+                        <div class="card-id">Окошко #${cardCounter - 1}</div>
+                        <button class="delete-btn" onclick="closeCard('${cardId}')">Удалить</button>
+                    </div>
+                `;
+            }
+
 });
 
