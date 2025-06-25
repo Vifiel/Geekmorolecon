@@ -16,7 +16,8 @@ class User(UserMixin):
         if user_data.exists:
             return User(
                 email=email,
-                password=user_data.get('password')
+                password=user_data.get('password'),
+                isAdmin=user_data.get("isAdmin")
             )
         return None
 

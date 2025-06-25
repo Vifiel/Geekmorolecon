@@ -5,6 +5,14 @@ import tempfile
 
 firebase_key = os.getenv("FIREBASE_KEY")
 
+if firebase_key:
+    pass
+else:
+    from dotenv import load_dotenv
+    load_dotenv() 
+
+    firebase_key = os.getenv("FIREBASE_KEY")
+
 with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as temp:
     temp.write(firebase_key.encode())
     temp_path = temp.name
