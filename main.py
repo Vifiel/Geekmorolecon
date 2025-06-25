@@ -116,11 +116,6 @@ def add_entry():
         'id': new_id,
         'title': request.form['title'],
         'content': request.form['content']
-    new_id = max([e['id'] for e in user_entries], default=0) + 1
-    user_entries.append({
-        'id': new_id,
-        'title': request.form['title'],
-        'content': request.form['content']
     })
     return redirect(url_for('index'))
 
