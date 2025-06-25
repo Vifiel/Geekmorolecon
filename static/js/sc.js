@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const enterForm = document.getElementById("enterForm");
   const enterCloseBtn = document.getElementById("EnterClose");
 
+  const createSectionBtn = document.getElementById("createSection");
+  const createSectionForm = document.getElementById("CreateSectionForm");
+  const createSectionFormClose = document.getElementById("CreateSectionFormClose");
+
   document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       const dropdownContent = btn.parentElement.querySelector('.dropdown-content');
@@ -18,11 +22,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  if (createSectionBtn && CreateSectionForm) {
+    createSectionBtn.addEventListener("click", function () {
+      createSectionForm.style.display = "block";
+      if (EnterForm) EnterForm.style.display = "none";
+      if (regForm) regForm.style.display = "none";
+    });
+  }
+
+  if (createSectionFormClose){
+    createSectionFormClose.addEventListener("click", function () {
+      createSectionForm.style.display = "none";
+    });
+  }
+
 
   if (registrationBtn && regForm) {
     registrationBtn.addEventListener("click", function () {
       regForm.style.display = "block";
       if (EnterForm) EnterForm.style.display = "none";
+      if (CreateSectionForm) createSectionForm.style.display = "none";
     });
   }
 
@@ -36,6 +55,7 @@ document.addEventListener("DOMContentLoaded", function () {
     enterBtn.addEventListener("click", function () {
       EnterForm.style.display = "block";
       if (regForm) regForm.style.display = "none";
+      if (CreateSectionForm) createSectionForm.style.display = "none"
     });
   }
 

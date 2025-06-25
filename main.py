@@ -45,10 +45,10 @@ def enter():
     else:
         return respond
 
-@app.route("/createSectionForm", methods=["POST"])
+@app.route("/createSection", methods=["POST"])
 def createSection():
     form_data = request.form.to_dict()
-
+    print(form_data)
     current_section = Section(form_data)
     current_section.post()
 
