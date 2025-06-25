@@ -6,6 +6,7 @@ from back.create_table import import_data_to_file
 from database.init_db import db
 
 app = Flask("Reg")
+app.secret_key = "your-very-secret-key"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -36,6 +37,24 @@ def display_data():
 def main():
     return render_template("index.html", form_open=False)
 
+
+@app.route("/account")
+@login_required
+def account():
+
+    user_data = db.collection("users").document(current_user.email).get()
+    user_dict = user_data.to_dict() or {}
+
+    entries_ref = db.collection("entries").where("user_email", "==", current_user.email).stream()
+    entries = [entry.to_dict() for entry in entries_ref]
+
+    return render_template(
+        "profile.html",
+        user=user_dict,
+        entries=entries
+    )
+
+
 @app.route("/register", methods=["POST"])
 def register():
     form_data = request.get_json()
@@ -53,17 +72,30 @@ def register():
 @app.route("/enter", methods=["POST"])
 def enter():
     form_data = request.get_json()
+    user_data = db.collection("users").document(form_data["email"]).get()
+    user_dict = user_data.to_dict() or {}
 
-    user = User(form_data["email"], form_data["password"])
-    user_data = db.collection("users").document(user.email).get()
+    # user = User(form_data["email"], form_data["password"])
+    # user_data = db.collection("users").document(user.email).get()
+
+    import hashlib
+    password_hash = hashlib.sha256(form_data["password"].encode("utf-8")).hexdigest()
+
     is_exist = user_data.exists 
-    is_pass_match = user_data.get("password") == user.password
+    is_pass_match = user_data.get("password") == password_hash
+
     respond = jsonify({"exists": user_data.exists, "passMatch": is_pass_match})
 
     if not is_exist or not is_pass_match:
         return respond
     else:
-        login_user(current_user)
+        user = User(
+            form_data["email"],
+            password_hash,
+            is_admin=user_dict.get('isAdmin', False)
+        )
+        # login_user(current_user)
+        login_user(user)
         return respond
 
 @app.route("/createSection", methods=["POST"])
@@ -122,6 +154,8 @@ def load_user(user_id):
 def download():
     import_data_to_file()
     return send_file("static/files/registredUsers.xlsx", as_attachment=True)
+
+
 
 if __name__ == "__main__":
     app.run()
