@@ -121,7 +121,10 @@
                 <p>Описание: {{ item.description }}</p>
                 <p>Количество: {{ item.counter }}</p>
             </div>
-            <button class="section-btn enroll-btn">Записаться</button>
+            <form method="POST" action="/entryToSection">
+                <input type="hidden" name="name" value="{{ item.name }}">
+                <button type="submit" class="section-btn enroll-btn">Записаться</button>
+            </form>
         </div>
     </div>
     {% else %}
