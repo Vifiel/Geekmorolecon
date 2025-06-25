@@ -148,23 +148,6 @@ transition: background 0.2s;
 }
 
 
-/* контейнер кнопок в горизонтальный ряд */
-.section-row {
-    display: flex;
-    gap: 25px;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
-}
-
-#sections.section-row {
-    min-height: 100vh;
-    display: flex;
-    gap: 25px;
-    justify-content: center;
-    align-items: center;
-}
-
 /* кнопки секций */
 .section-btn {
     display: inline-block;
@@ -224,6 +207,15 @@ transition: background 0.2s;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: flex-start;
+    margin: 20px 0;
+}
+
+#sections.cards-container {
+    min-height: 100vh;
+    display: flex;
+    gap: 25px;
+    justify-content: center;
+    align-items: center;
 }
 
 .card {
