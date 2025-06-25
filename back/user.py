@@ -1,6 +1,6 @@
 import hashlib
 from flask_login import UserMixin
-from database import init_db
+from database.init_db import db
 
 class User(UserMixin):
     def __init__(self, email, password):
@@ -10,7 +10,7 @@ class User(UserMixin):
     @staticmethod
     def get(email):
         # Получаем пользователя по email (который является ID)
-        user_ref = init_db.db.collection('users').document(email)
+        user_ref = db.collection('users').document(email)
         user_data = user_ref.get()
 
         if user_data.exists:
