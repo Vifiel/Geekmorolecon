@@ -19,6 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const unmatchedPasswordsError = document.getElementById("UnmatchedPasswords");
   const alreadyRegistredError = document.getElementById("InDatabase");
 
+  const exitBtn = document.getElementById("exitBtn");
+
   document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
       const dropdownContent = btn.parentElement.querySelector('.dropdown-content');
@@ -77,6 +79,12 @@ document.addEventListener("DOMContentLoaded", function () {
       enterForm.reset();
     });
   }
+  
+  exitBtn.addEventListener("click", function(){
+    registrationBtn.style.display = "block";
+    enterBtn.style.display = "block";
+    exitBtn.style.display = "none";
+  })
 
   if (enterForm) {
       enterForm.addEventListener("submit", function (e) {
@@ -103,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function () {
             enterForm.reset()
             registrationBtn.style.display = "none";
             enterBtn.style.display = "none";
+            exitBtn.style.display = "block";
             EnterForm.style.display = "none";
         }
         })
