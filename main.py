@@ -156,17 +156,31 @@ def entryToSection():
     print(form_data)
 
     if current_user.is_authenticated:
-        form_data['users'] = current_user.email
+        form_data['email'] = current_user.email
+
         print(form_data)
-
         forUser, forSection = {}, {}
-        forUser['sections'] = form_data['name']
-        forSection['users'] = form_data['users']
 
-        db.collection('section').document(form_data['name']).set(forSection, merge=True)
-        db.collection('users').document(form_data['users']).set(forUser, merge=True)
+        usersFrSection = db.collection('section').document(form_data['name']).get().to_dict()
+        sectionsFrUser = db.collection('users').document(form_data['email']).get().to_dict()
 
-        print('пользователь добавлен')
+        if int(usersFrSection['counter']) > 0:
+            if form_data['email'] not in usersFrSection['users'] and form_data['name'] not in sectionsFrUser['sections']:
+                usersFrSection['users'].append(form_data['email'])
+                sectionsFrUser['sections'].append(form_data['name'])
+
+                forUser['sections'] = sectionsFrUser['sections']
+                forSection['users'] = usersFrSection['users']
+                forSection['counter'] = str(int(usersFrSection['counter']) - 1)
+
+                db.collection('section').document(form_data['name']).set(forSection, merge=True)
+                db.collection('users').document(form_data['email']).set(forUser, merge=True)
+
+                print('пользователь добавлен')
+            else:
+                print('уже записан')
+        else:
+            print('мест нет')
     else:
         print('please log in')
 
