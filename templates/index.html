@@ -44,6 +44,25 @@
     </form>
 </div>
 
+<button class="regbtn" id="createSection">Создать</button>
+
+<div class="form-popup" id="CreateSectionForm">
+    <form id=createSectionForm class="form-container" method="POST" action="/createSection">
+
+        <label for="name"><b>Название</b></label>
+        <input type="text" placeholder="Введите название секции" name="name" id="name" required>
+
+        <label for="description"><b>Описание</b></label>
+        <input type="description" placeholder="Введите описание" name="description" id="description" required>
+
+        <label for="counter"><b>Кол-во человек</b></label>
+        <input type="counter" placeholder="Введите кол-во человек" name="counter" id="counter" required>
+
+
+        <button type="submit" class="subbtn">Создать</button>
+        <button type="button" class="btnclose" id="CreateSectionFormClose">Закрыть</button>
+    </form>
+</div>
 
 <!--главная часть страницы -->
 
