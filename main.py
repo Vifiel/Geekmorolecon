@@ -73,22 +73,16 @@ def update_user():
         user_ref.update(updates)
     return redirect(url_for('account'))
 
-
 @app.route('/add-entry', methods=['POST'])
-def update_user():
-    user_ref = db.collection("users").document(current_user.email)
-    updates = {}
-    if 'name' in request.form:
-        updates['name'] = request.form['name']
-    if 'email' in request.form:
-        updates['email'] = request.form['email']
-    if 'password' in request.form and request.form['password']:
-        import hashlib
-        updates['password'] = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
-    if updates:
-        user_ref.update(updates)
+@login_required
+def add_entry():
+    form_data = request.form.to_dict()
+    db.collection("entries").add({
+        "user_email": current_user.email,
+        "title": form_data["title"],
+        "content": form_data["content"]
+    })
     return redirect(url_for('account'))
-
 
 @app.route('/update-entry/<entry_id>', methods=['POST'])
 @login_required
