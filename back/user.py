@@ -19,10 +19,11 @@ class User(UserMixin):
         user_data = user_ref.get()
 
         if user_data.exists:
+            user_dict = user_data.to_dict() or {}
             return User(
                 email=email,
-                password=user_data.get('password'),
-                isAdmin=user_data.get("isAdmin", False)
+                password=user_dict.get('password'),
+                is_admin=user_dict.get("isAdmin", False)
             )
         return None
 

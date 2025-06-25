@@ -77,9 +77,7 @@ body {
 }
 
 
-.signin-btn:hover {
-    background-color: #d95c5c;
-}
+
 
 .form-popup {
   display: none;
@@ -138,11 +136,11 @@ body {
 }
 
 
-.form-container .subbtn:hover, .signin-btn:hover {
+.form-container .subbtn:hover, .funcbtn:hover {
   opacity: 1;
 }
 
-/* кнопка регистрации */
+/* стандартная кнопка */
 .funcbtn {
 display: inline-block;
 height: 40;
@@ -159,7 +157,7 @@ transition: background 0.2s;
 font-weight: bold;
 }
 
-.regbtn:hover {
+.funcbtn:hover {
     background-color: #d95c5c;
 }
 
