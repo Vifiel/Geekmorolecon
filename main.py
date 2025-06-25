@@ -10,6 +10,22 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+@app.route('/')
+def display_data():
+    try:
+        users_ref = init_db.db.collection('section')
+        docs = users_ref.stream()
+        data = []
+
+        for doc in docs:
+            doc_data = doc.to_dict()
+            data.append(doc_data)
+
+        return render_template('index.html', data=data)
+
+    except Exception as e:
+        return f"Ошибка получения данных: {str(e)}", 500
+
 @app.route("/", methods=["POST", "GET"])
 def main():
     return render_template("index.html", form_open=False)
