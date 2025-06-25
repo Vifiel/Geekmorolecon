@@ -9,14 +9,8 @@
         <h2 class="account-title">Данные пользователя</h2>
 
         <div class="user-info-grid">
-            <div class="user-info-label">ID:</div>
-            <div class="user-info-value">{{ user.id }}</div>
-
             <div class="user-info-label">Имя:</div>
             <div class="user-info-value">{{ user.first_name }}</div>
-
-            <div class="user-info-label">Фамилия:</div>
-            <div class="user-info-value">{{ user.last_name }}</div>
 
             <div class="user-info-label">Почта:</div>
             <div class="user-info-value">{{ user.email }}</div>
@@ -33,9 +27,6 @@
                 <div class="user-info-grid">
                     <label class="user-info-label" for="first_name">Имя:</label>
                     <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
-
-                    <label class="user-info-label" for="last_name">Фамилия:</label>
-                    <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" required>
 
                     <label class="user-info-label" for="email">Почта:</label>
                     <input type="email" id="email" name="email" value="{{ user.email }}" required>
