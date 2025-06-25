@@ -30,6 +30,16 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
+  const toSectionsBtn = document.getElementById("toSectionsBtn");
+  if (toSectionsBtn) {
+    toSectionsBtn.addEventListener("click", function () {
+      const sections = document.getElementById("sections");
+      if (sections) {
+        sections.scrollIntoView({ behavior: "smooth" });
+      }
+    });
+  }
+
   if (createSectionBtn && CreateSectionForm) {
     createSectionBtn.addEventListener("click", function () {
       CreateSectionForm.style.display = "block";
