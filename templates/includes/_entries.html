@@ -1,0 +1,52 @@
+<div class="entries">
+    <h2>Записи пользователя</h2>
+    {% if entries %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Название</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.id }}</td>
+                    <td>{{ entry.title }}</td>
+                    <td class="action-buttons">
+                        <button onclick="showEditForm('entryEditForm{{ entry.id }}')">Редактировать</button>
+                        <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}" style="display: inline;">
+                            <button type="submit">Удалить</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3">
+                        <div id="entryEditForm{{ entry.id }}" class="entry-edit-form">
+                            <h4>Редактирование записи</h4>
+                            <form method="POST" action="{{ url_for('update_entry', entry_id=entry.id) }}">
+                                <input type="hidden" name="entry_id" value="{{ entry.id }}">
+
+                                <label for="title{{ entry.id }}">Название:</label>
+                                <input type="text" id="title{{ entry.id }}" name="title" value="{{ entry.title }}" required>
+
+                                <label for="content{{ entry.id }}">Содержание:</label>
+                                <textarea id="content{{ entry.id }}" name="content" required>{{ entry.content }}</textarea>
+
+                                <div class="action-buttons">
+                                    <button type="submit">Сохранить</button>
+                                    <button type="button" onclick="hideEditForm('entryEditForm{{ entry.id }}')">Отмена</button>
+                                </div>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Нет записей</p>
+    {% endif %}
+
+</div>
