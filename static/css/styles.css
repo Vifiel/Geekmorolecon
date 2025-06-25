@@ -5,9 +5,13 @@ html {
   scroll-behavior: smooth;
 }
 
-
 body {
     padding-top: 60px; 
+}
+
+/* применяем шрифт ко всем элементам */
+* {
+    font-family: 'TT Mussels';
 }
 
 /* шапка сайта */
