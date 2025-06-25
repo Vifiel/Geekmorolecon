@@ -12,7 +12,7 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
-@app.route('/', methods=["POST", "GET"])
+@app.route('/', methods=["POST", "GET"], methods=["POST", "GET"])
 def display_data():
     try:
         users_ref = db.collection('section')
@@ -36,15 +36,12 @@ def display_data():
     except Exception as e:
         return f"Ошибка получения данных: {str(e)}", 500
 
-
-# Данные пользователя (временное хранилище)
-user_data = {
-    'id': 1,
-    'first_name': 'Иван',
-    'last_name': 'Иванов',
-    'email': 'ivanov@example.com',
-    'password': 'secret123'
-}
+# Записи пользователя (временное хранилище)
+user_entries = [
+    {'id': 1, 'title': 'Тест1', 'content': 'Текстовый тест'},
+    {'id': 2, 'title': 'Тест2', 'content': 'Текстовый текст'},
+    {'id': 3, 'title': 'Тест3', 'content': 'Тестовый тест'}
+]
 
 # Записи пользователя (временное хранилище)
 user_entries = [
@@ -58,11 +55,13 @@ user_entries = [
 @login_required
 def account():
     # Получаем данные пользователя из Firestore
+    # Получаем данные пользователя из Firestore
     user_data = db.collection("users").document(current_user.email).get()
     user_dict = user_data.to_dict() or {}
 
     # Получаем записи пользователя 
     entries_ref = db.collection("entries").where("user_email", "==", current_user.email).stream()
+    entries = [entry.to_dict() | {"id": entry.id} for entry in entries_ref]
     entries = [entry.to_dict() | {"id": entry.id} for entry in entries_ref]
 
     return render_template(
@@ -74,7 +73,26 @@ def account():
 
 # filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
 @app.route('/update-user', methods=['POST'])
+
+# filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
+@app.route('/update-user', methods=['POST'])
 @login_required
+def update_user():
+    user_ref = db.collection("users").document(current_user.email)
+    updates = {}
+    if 'name' in request.form:
+        updates['name'] = request.form['name']
+    if 'email' in request.form:
+        updates['email'] = request.form['email']
+    if 'password' in request.form and request.form['password']:
+        import hashlib
+        updates['password'] = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
+    if updates:
+        user_ref.update(updates)
+    return redirect(url_for('account'))
+
+
+@app.route('/add-entry', methods=['POST'])
 def update_user():
     user_ref = db.collection("users").document(current_user.email)
     updates = {}
@@ -97,7 +115,14 @@ def add_entry():
         'id': new_id,
         'title': request.form['title'],
         'content': request.form['content']
+    new_id = max([e['id'] for e in user_entries], default=0) + 1
+    user_entries.append({
+        'id': new_id,
+        'title': request.form['title'],
+        'content': request.form['content']
     })
+    return redirect(url_for('index'))
+
     return redirect(url_for('index'))
 
 
