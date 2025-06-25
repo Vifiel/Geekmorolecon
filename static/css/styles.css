@@ -77,7 +77,7 @@
 }
 
 /* кнопка регистрации */
-.regbtn {
+.funcbtn {
 display: inline-block;
 height: 40;
 width: 120;
@@ -95,40 +95,6 @@ transition: background 0.2s;
 
 .regbtn:hover {
     background-color: #d95c5c;
-}
-
-/* кнопка входа */
-.signin-btn{
-display: block;
-height: 40;
-width: 120;
-padding: 10px 10px;
-background-color: #F77E7E;
-color: white;
-text-decoration: none;
-border-radius: 4px;
-border: none;
-font-family: Arial, sans-serif;
-font-size: 16px;
-cursor: pointer;
-transition: background 0.2s;
-}
-
-/* кнопка выхода */
-.exitbtn{
-display: none;
-height: 40;
-width: 120;
-padding: 10px 10px;
-background-color: #F77E7E;
-color: white;
-text-decoration: none;
-border-radius: 4px;
-border: none;
-font-family: Arial, sans-serif;
-font-size: 16px;
-cursor: pointer;
-transition: background 0.2s;
 }
 
 
