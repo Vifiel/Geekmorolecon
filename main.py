@@ -21,7 +21,12 @@ def display_data():
             doc_data = doc.to_dict()
             data.append(doc_data)
 
-        return render_template('index.html', data=data)
+        is_admin = False
+        if current_user.is_authenticated:
+            user_data = init_db.db.collection("users").document(current_user.email).get()
+            is_admin = user_data.get("isAdmin", False)
+
+        return render_template('index.html', data=data, is_admin=is_admin)
 
     except Exception as e:
         return f"Ошибка получения данных: {str(e)}", 500
@@ -62,6 +67,14 @@ def enter():
 
 @app.route("/createSection", methods=["POST"])
 def createSection():
+    
+    if not current_user.is_authenticated:
+        return "Пожалуйста, войдите в систему", 401
+
+    user_data = init_db.db.collection("users").document(current_user.email).get()
+    if not user_data.get("isAdmin", False):
+        return "Доступ запрещён", 403
+    
     form_data = request.form.to_dict()
     print(form_data)
     current_section = Section(form_data)
