@@ -11,8 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
   const enterCloseBtn = document.getElementById("EnterClose");
 
   const createSectionBtn = document.getElementById("createSection");
-  const createSectionForm = document.getElementById("CreateSectionForm");
+  const CreateSectionForm = document.getElementById("CreateSectionForm");
+  const createSectionForm = document.getElementById("createSectionForm");
   const createSectionFormClose = document.getElementById("CreateSectionFormClose");
+
+  const userNotFoundError = document.getElementById("NotInDatabase");
+  const unmatchedPasswordsError = document.getElementById("UnmatchedPasswords");
+  const alreadyRegistredError = document.getElementById("InDatabase");
 
   document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
     btn.addEventListener('click', function() {
@@ -25,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (createSectionBtn && CreateSectionForm) {
     createSectionBtn.addEventListener("click", function () {
-      createSectionForm.style.display = "block";
+      CreateSectionForm.style.display = "block";
       if (EnterForm) EnterForm.style.display = "none";
       if (regForm) RegForm.style.display = "none";
     });
@@ -33,7 +38,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (createSectionFormClose){
     createSectionFormClose.addEventListener("click", function () {
-      createSectionForm.style.display = "none";
+      CreateSectionForm.style.display = "none";
+      createSectionForm.reset();
     });
   }
 
@@ -42,27 +48,33 @@ document.addEventListener("DOMContentLoaded", function () {
     registrationBtn.addEventListener("click", function () {
       RegForm.style.display = "block";
       if (EnterForm) EnterForm.style.display = "none";
-      if (CreateSectionForm) createSectionForm.style.display = "none";
+      if (CreateSectionForm) CreateSectionForm.style.display = "none";
     });
   }
 
   if (regCloseBtn){
     regCloseBtn.addEventListener("click", function () {
       RegForm.style.display = "none";
+      alreadyRegistredError.textContent = "";
+      regForm.reset();
     });
   }
 
   if (enterBtn && EnterForm) {
     enterBtn.addEventListener("click", function () {
+      console.log("нажат вход")
       EnterForm.style.display = "block";
       if (RegForm) RegForm.style.display = "none";
-      if (CreateSectionForm) createSectionForm.style.display = "none"
+      if (CreateSectionForm) CreateSectionForm.style.display = "none"
     });
   }
 
   if (enterCloseBtn){
     enterCloseBtn.addEventListener("click", function () {
-      enterForm.style.display = "none";
+      EnterForm.style.display = "none";
+      unmatchedPasswordsError.textContent = "";
+      userNotFoundError.textContent = "";
+      enterForm.reset();
     });
   }
 
@@ -70,23 +82,25 @@ document.addEventListener("DOMContentLoaded", function () {
       enterForm.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
 
         fetch("/enter", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email: email, password: password })
+            body: JSON.stringify({ email: email.value, password: password.value })
         })
         .then(response => response.json())
         .then(data => {
         if (!data.exists) {
-            document.getElementById("NotInDatabase").textContent = "Пользователь не найден.";
+            email.value = "";
+            userNotFoundError.textContent = "Пользователь не найден.";
         } else if (!data.passMatch){
             document.getElementById("UnmatchedPasswords").textContent = "Неверный пароль";
         } else {
+            enterForm.reset()
             EnterForm.style.display = "none";
         }
         })
@@ -97,22 +111,24 @@ document.addEventListener("DOMContentLoaded", function () {
       regForm.addEventListener("submit", function (e) {
         e.preventDefault();
 
-        const email = document.getElementById("regEmail").value;
-        const password = document.getElementById("regPassword").value;
-        const name = document.getElementById("name").value;
+        const email = document.getElementById("regEmail");
+        const password = document.getElementById("regPassword");
+        const name = document.getElementById("regName");
 
         fetch("/register", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email: email, password: password, name: name })
+            body: JSON.stringify({ email: email.value, password: password.value, name: name.value })
         })
         .then(response => response.json())
         .then(data => {
         if (data.exists) {
-            document.getElementById("InDatabase").textContent = "Пользователь уже зарегестрирован";
+            email.value = "";
+            alreadyRegistredError.textContent = "Пользователь уже зарегестрирован";
         } else {
+            regForm.reset()
             RegForm.style.display = "none";
         }
         })
