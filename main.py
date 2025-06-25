@@ -24,11 +24,14 @@ def display_data():
             data.append(doc_data)
 
         is_admin = False
+        is_authenticated = False
         if current_user.is_authenticated:
+            is_authenticated = True
             user_data = db.collection("users").document(current_user.email).get()
-            is_admin = user_data.get("isAdmin", False)
+            user_dict = user_data.to_dict() or {}
+            is_admin = user_dict.get("isAdmin", False)
 
-        return render_template('index.html', data=data, is_admin=is_admin)
+        return render_template('index.html', data=data, is_admin=is_admin, is_authenticated=is_authenticated)
 
     except Exception as e:
         return f"Ошибка получения данных: {str(e)}", 500
@@ -36,6 +39,10 @@ def display_data():
 @app.route("/", methods=["POST", "GET"])
 def main():
     return render_template("index.html", form_open=False)
+
+
+
+
 
 
 @app.route("/account")
@@ -54,6 +61,35 @@ def account():
         entries=entries
     )
 
+@app.route("/add-entry", methods=["POST"])
+@login_required
+def add_entry():
+    form_data = request.form.to_dict()
+    db.collection("entries").add({
+        "user_email": current_user.email,
+        "title": form_data["title"],
+        "content": form_data["content"]
+    })
+    return redirect(url_for("account"))
+
+@app.route("/update-entry/<entry_id>", methods=["POST"])
+@login_required
+def update_entry(entry_id):
+    form_data = request.form.to_dict()
+    entry_ref = db.collection("entries").document(entry_id)
+    entry_ref.update({
+        "title": form_data["title"],
+        "content": form_data["content"]
+    })
+    return redirect(url_for("account"))
+
+@app.route("/delete-entry/<entry_id>", methods=["POST"])
+@login_required
+def delete_entry(entry_id):
+    entry_ref = db.collection("entries").document(entry_id)
+    entry_ref.delete()
+    return redirect(url_for("account"))
+
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -68,6 +104,10 @@ def register():
     else:
         user.post()
         return respond
+    
+
+
+
 
 @app.route("/enter", methods=["POST"])
 def enter():
