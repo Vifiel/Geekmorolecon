@@ -41,10 +41,6 @@ def main():
     return render_template("index.html", form_open=False)
 
 
-
-
-
-
 @app.route("/account")
 @login_required
 def account():
@@ -163,18 +159,24 @@ def createSection():
     return redirect(url_for("main"))
 
 @app.route("/entryToSection", methods=["POST"])
-@login_required
 def entryToSection():
     form_data = request.form.to_dict()
     print(form_data)
-    current_section = Section(form_data)
-#    current_section.post()
 
-    if not current_section.isExist():
-        email = current_user.email
-        current_section.post(email)
+    if current_user.is_authenticated:
+        form_data['users'] = current_user.email
+        print(form_data)
+
+        forUser, forSection = {}, {}
+        forUser['sections'] = form_data['name']
+        forSection['users'] = form_data['users']
+
+        db.collection('section').document(form_data['name']).set(forSection, merge=True)
+        db.collection('users').document(form_data['users']).set(forUser, merge=True)
 
         print('пользователь добавлен')
+    else:
+        print('please log in')
 
     return redirect(url_for("main"))
 
