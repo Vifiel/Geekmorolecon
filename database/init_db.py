@@ -6,7 +6,7 @@ import tempfile
 firebase_key = os.getenv("FIREBASE_KEY")
 
 with tempfile.NamedTemporaryFile(delete=False, suffix=".json") as temp:
-    temp.write(firebase_creds_str.encode())
+    temp.write(firebase_key.encode())
     temp_path = temp.name
 
 cred = firebase_admin.credentials.Certificate(temp_path)
