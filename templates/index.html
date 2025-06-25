@@ -87,32 +87,26 @@
     <br />
     
     <!-- кнопки секций -->
-    <div class="section-row">
-        <div class="dropdown">
-            <button class="section-btn dropdown-btn">Секция 1</button>
-            <div class="dropdown-content">
-                <p>Описание 1</p>
-                <button class="section-btn">Записаться</button>
-            </div>
-        </div>
 
-        <div class="dropdown">
-            <button class="section-btn dropdown-btn">Секция 2</button>
-            <div class="dropdown-content">
-                <p>Описание 2</p>
-                <button class="section-btn">Записаться</button>
+<div class="cards-container">
+    {% for item in data %}
+    <div class="card">
+        <button class="section-btn dropdown-btn">{{ item.name }}</button>
+        <div class="dropdown-content">
+            <div class="card-details">
+                <p>Описание: {{ item.description }}</p>
+                <p>Количество: {{ item.counter }}</p>
             </div>
+            <button class="section-btn enroll-btn">Записаться</button>
         </div>
-
-        <div class="dropdown">
-            <button class="section-btn dropdown-btn">Секция 3</button>
-            <div class="dropdown-content">
-                <p>Описание 3</p>
-                <button class="section-btn">Записаться</button>
-            </div>
-        </div>
-
     </div>
+    {% else %}
+    <div class="no-data">
+        <p>Нет данных</p>
+    </div>
+    {% endfor %}
+</div>
+
 
 </div>
 
