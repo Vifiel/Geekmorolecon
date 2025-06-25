@@ -9,8 +9,6 @@ app = Flask("Reg")
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-current_user = None
-
 
 @app.route("/", methods=["POST", "GET"])
 def main():
@@ -34,17 +32,13 @@ def register():
 def enter():
     form_data = request.get_json()
 
-    current_user = User(form_data["email"], form_data["password"])
-    user_data = init_db.db.collection("users").document(current_user.email).get()
+    user = User(form_data["email"], form_data["password"])
+    user_data = init_db.db.collection("users").document(user.email).get()
     is_exist = user_data.exists 
-    is_pass_match = user_data.get("password") == current_user.password
+    is_pass_match = user_data.get("password") == user.password
     respond = jsonify({"exists": user_data.exists, "passMatch": is_pass_match})
 
-    if not is_exist:
-        current_user = None
-        return  respond
-    elif not is_pass_match:
-        current_user = None
+    if not is_exist or not is_pass_match:
         return respond
     else:
         login_user(current_user)
