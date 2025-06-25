@@ -195,7 +195,8 @@ font-weight: bold;
 }
 
 .to-sections-btn {
-    background: #F77E7E;
+    background: url('/static/images/tosections.svg') no-repeat;
+    background-size: 40px 40px;
     color: white;
     border: none;
     border-radius: 4px;
