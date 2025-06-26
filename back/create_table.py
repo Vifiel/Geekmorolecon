@@ -1,5 +1,6 @@
 from database.init_db import db
 import pandas as pd
+import os
 
 def structureData(col):
     docs = db.collection(col).stream()
@@ -14,11 +15,10 @@ def structureData(col):
 
 
 def import_data_to_file():
-    import os
     output_dir = "static/files"
     os.makedirs(output_dir, exist_ok=True)
 
-    columns = ["email", "isAdmin", "name", "sections"]
+    columns = ["email",  "name", "sections"]
     # df = pd.DataFrame(data, columns=sorted(all_keys))
     df = pd.DataFrame(structureData('users'), columns=columns)
 
