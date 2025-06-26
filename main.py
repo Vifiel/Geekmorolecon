@@ -179,28 +179,26 @@ def createSection():
         return "Доступ запрещён", 403
     else:
         form_data = request.form.to_dict()
-        print(form_data)
+
         current_section = Section(form_data)
-    #    current_section.post()
 
         if not current_section.isExist():
             current_section.post()
-            print('данные добавлены')
+            print('log: данные добавлены')
         else:
             current_section.update(form_data)
-            print('данные обновлены')
+            print('log: данные обновлены')
 
     return redirect(url_for("display_data"))
 
 @app.route("/entryToSection", methods=["POST"])
+@login_required
 def entryToSection():
     form_data = request.form.to_dict()
-    print(form_data)
 
     if current_user.is_authenticated:
         form_data['email'] = current_user.email
 
-        print(form_data)
         forUser, forSection = {}, {}
 
         usersFrSection = db.collection('section').document(form_data['name']).get().to_dict()
@@ -218,11 +216,11 @@ def entryToSection():
                 db.collection('section').document(form_data['name']).set(forSection, merge=True)
                 db.collection('users').document(form_data['email']).set(forUser, merge=True)
 
-                print('пользователь добавлен')
+                print('log: пользователь добавлен')
             else:
-                print('уже записан')
+                print('log: пользователь уже записан')
         else:
-            print('мест нет')
+            print('log: мест нет')
     else:
         print('please log in')
 
