@@ -233,11 +233,6 @@ def logout():
     return redirect(url_for("display_data"))
 
 
-@app.route("/back")
-def back():
-    return redirect(url_for("display_data"))
-
-
 @login_manager.user_loader
 def load_user(user_id):
     # user_id - это email

@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const exitBtn = document.getElementById("exitBtn");
 
+    const toSectionsBtn = document.getElementById("toSectionsBtn");
+
+
     document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             const dropdownContent = btn.parentElement.querySelector('.dropdown-content');
@@ -28,10 +31,9 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 
-    const toSectionsBtn = document.getElementById("toSectionsBtn");
     toSectionsBtn.addEventListener("click", function () {
         const sections = document.getElementById("sections");
-        sections.scrollIntoView({ behavior: "smooth" });
+        sections.scrollIntoView({ behavior: "smooth", start: "block"});
     });
 
     if (createSectionBtn) {
