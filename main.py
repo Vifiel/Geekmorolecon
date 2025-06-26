@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
-from flask_login import login_user, logout_user, login_required, current_user, LoginManager
+from flask_login import login_user, logout_user, login_required, current_user, LoginManager, AnonymousUserMixin
 from back.user import User, UserData
 from back.section import Section
 from back.create_table import import_data_to_file
@@ -10,6 +10,10 @@ app.secret_key = "your-very-secret-key"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+class Anonymous(AnonymousUserMixin):
+    isAdmin = False
+login_manager.anonymous_user = Anonymous
 
 
 @app.route('/', methods=["POST", "GET"])
@@ -98,6 +102,30 @@ def delete_entry(entry_id):
 
 
 
+@app.route("/register", methods=["POST"])
+def register():
+    form_data = request.get_json()
+    email = form_data.get("email")
+    password = form_data.get("password")
+    name = form_data.get("name")
+
+    user_ref = db.collection("users").document(email)
+    user_data = user_ref.get()
+
+    if user_data.exists:
+        return jsonify({"exists": True})
+
+    import hashlib
+    password_hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
+    user_info = {
+        "email": email,
+        "password": password_hash,
+        "name": name,
+        "isAdmin": False,
+        "sections": []
+    }
+    user_ref.set(user_info)
+    return jsonify({"exists": False})
 
 
 @app.route("/enter", methods=["POST"])

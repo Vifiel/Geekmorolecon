@@ -10,8 +10,12 @@
     <a href="/" class="header-title">Добро пожаловать на сайт!</a>
     <div class="header-buttons">
         <button class="to-sections-btn" id="toSectionsBtn">К секциям</button>
-        <button class="login-btn" onclick="window.location.href='/account'">Войти</button>
-        <button class="funcbtn" id="exitBtn" style="display: none" >Выйти</button>
+        {% if is_authenticated %}
+            <button class="account-btn" onclick="window.location.href='/account'"></button>
+            <button class="funcbtn" onclick="window.location.href='/logout'">Выйти</button> 
+        {% else %}
+            <button class="login-btn" id="Enter">Войти</button>
+        {% endif %}
     </div>
 </div>
 
