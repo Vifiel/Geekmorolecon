@@ -38,5 +38,5 @@ class UserData(User):
         self.data["isAdmin"] = False
 
     def post(self):
-        init_db.db.collection("users").document(self.email).set(self.data)
+        db.collection("users").document(self.email).set(self.data)
 
