@@ -55,7 +55,6 @@
             <table class="entries-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
                         <th>Название</th>
                         <th>Действия</th>
                     </tr>
@@ -64,37 +63,13 @@
                     {% for entry in entries %}
                     <tr>
                         <td>{{ entry.id }}</td>
-                        <td>{{ entry.title }}</td>
                         <td>
                             <div class="action-buttons">
-                                <button class="action-btn" onclick="showEditForm('entryEditForm{{ entry.id }}')">Редактировать</button>
                                 <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}" style="display: inline;">
                                     <button type="submit" class="action-btn">Удалить</button>
                                 </form>
                             </div>
                         </td>
-                    </tr>
-                    <tr>
-                        <td colspan="3">
-                            <div id="entryEditForm{{ entry.id }}" class="edit-form" style="display: none;">
-                                <h4>Редактирование записи</h4>
-                                <form method="POST" action="{{ url_for('update_entry', entry_id=entry.id) }}">
-                                    <div class="user-info-grid">
-                                        <label class="user-info-label" for="title{{ entry.id }}">Название:</label>
-                                        <input type="text" id="title{{ entry.id }}" name="title" value="{{ entry.title }}" required>
-
-                                        <label class="user-info-label" for="content{{ entry.id }}">Содержание:</label>
-                                        <textarea id="content{{ entry.id }}" name="content" required style="grid-column: 2">{{ entry.content }}</textarea>
-                                    </div>
-
-                                    <div style="margin-top: 20px;">
-                                        <button type="submit" class="edit-profile-btn">Сохранить</button>
-                                        <button type="button" class="edit-profile-btn" onclick="hideEditForm('entryEditForm{{ entry.id }}')" style="background: #777; margin-left: 10px;">Отмена</button>
-                                    </div>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
                     {% endfor %}
                 </tbody>
             </table>
