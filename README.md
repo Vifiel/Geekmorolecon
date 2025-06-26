@@ -32,7 +32,7 @@
 
 1. Клонируйте репозиторий:
     ```bash
-    git clone https://github.com/yourname/registration-site.git
+    git clone https://github.com/Vifiel/registration-site
     cd registration-site
     ```
 2. Установите зависимости:
