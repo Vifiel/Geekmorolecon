@@ -161,20 +161,20 @@ def enter():
 def createSection():
 
     user_data = db.collection("users").document(current_user.email).get()
-    if not user_data.get("isAdmin", False):
+    if current_user.isAdmin == False:
         return "Доступ запрещён", 403
-    
-    form_data = request.form.to_dict()
-    print(form_data)
-    current_section = Section(form_data)
-#    current_section.post()
-
-    if not current_section.isExist():
-        current_section.post()
-        print('данные добавлены')
     else:
-        current_section.update(form_data)
-        print('данные обновлены')
+        form_data = request.form.to_dict()
+        print(form_data)
+        current_section = Section(form_data)
+    #    current_section.post()
+
+        if not current_section.isExist():
+            current_section.post()
+            print('данные добавлены')
+        else:
+            current_section.update(form_data)
+            print('данные обновлены')
 
     return redirect(url_for("display_data"))
 
