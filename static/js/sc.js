@@ -108,7 +108,9 @@ document.addEventListener("DOMContentLoaded", function () {
             })
             .then(response => response.json())
             .then(data => {
-                if (!data.exists) {
+                if (data.exists && data.passMatch) {
+                    window.location.reload(); 
+                } else if (!data.exists) {
                     email.value = "";
                     userNotFoundError.textContent = "Пользователь не найден";
                 } else if (!data.passMatch){
@@ -145,6 +147,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     email.value = "";
                     alreadyRegistredError.textContent = "Пользователь уже зарегистрирован";
                 } else {
+                    fetch("/enter", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ email: email.value, password: password.value })
+                })
+                .then(response => response.json())
+                .then(loginData => {
+                    if (loginData.exists && loginData.passMatch) {
+                        window.location.reload();
+                    }
+                });
                     regForm.reset()
                     RegForm.style.display = "none";
                 }
