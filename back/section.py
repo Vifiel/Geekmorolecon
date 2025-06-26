@@ -24,5 +24,5 @@ class Section:
         db.collection("section").document(self.name).set(new_data, merge=True)
 
     def entryUser(self, email):
-        self.data['users'] += email
+        self.data['users'].append(email)
         db.collection("section").document(self.name).set(self.data, merge=True)
