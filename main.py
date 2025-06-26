@@ -96,8 +96,25 @@ def update_entry(entry_id):
 @app.route('/delete-entry/<entry_id>', methods=['POST'])
 @login_required
 def delete_entry(entry_id):
-    entry_ref = db.collection("entries").document(entry_id)
-    entry_ref.delete()
+    email = current_user.email
+
+    section_ref = db.collection("section").document(entry_id).get()
+    section = section_ref.to_dict()
+    
+    ind = section["users"].index(email)
+    section["users"].pop(ind)
+    section["counter"] = str(int(section["counter"]) + 1)
+
+    db.collection("section").document(entry_id).set(section)
+
+    user_ref = db.collection("users").document(email).get()
+    user = user_ref.to_dict()
+
+    ind = user["sections"].index(entry_id)
+    user["sections"].pop(ind)
+
+    db.collection("users").document(email).set(user)
+
     return redirect(url_for('account'))
 
 
@@ -213,6 +230,11 @@ def entryToSection():
 @login_required
 def logout():
     logout_user()
+    return redirect(url_for("display_data"))
+
+
+@app.route("/back")
+def back():
     return redirect(url_for("display_data"))
 
 
