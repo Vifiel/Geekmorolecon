@@ -1,5 +1,5 @@
 import hashlib
-from flask_login import UserMixin
+from flask_login import UserMixin, AnonymousUserMixin
 from database.init_db import db
 
 class User(UserMixin):
@@ -27,6 +27,8 @@ class User(UserMixin):
             )
         return None
 
+class Anonymous(AnonymousUserMixin):
+    isAdmin = False
 
 class UserData(User):
     def __init__(self, data):

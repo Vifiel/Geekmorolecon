@@ -1,9 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
-from flask_login import login_user, logout_user, login_required, current_user, LoginManager, AnonymousUserMixin
-from back.user import User, UserData
+from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from back.section import Section
+from back.user import User, UserData, Anonymous
 from back.create_table import import_data_to_file
 from database.init_db import db
+import hashlib
 
 app = Flask("Reg")
 app.secret_key = "your-very-secret-key"
@@ -11,8 +12,6 @@ app.secret_key = "your-very-secret-key"
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-class Anonymous(AnonymousUserMixin):
-    isAdmin = False
 login_manager.anonymous_user = Anonymous
 
 
@@ -40,8 +39,11 @@ def account():
     user_dict = user_data.to_dict() or {}
 
     # Получаем записи пользователя 
-    entries_ref = db.collection("entries").where("user_email", "==", current_user.email).stream()
-    entries = [entry.to_dict() | {"id": entry.id} for entry in entries_ref]
+    entries_ref = db.collection("section").where( "users", "array_contains", current_user.email).stream()
+    entries = []
+    for entry in entries_ref:
+        entries.append(entry.to_dict())
+        entries[-1].update({"id": entry.id})
 
     return render_template(
         "profile.html",
@@ -100,8 +102,6 @@ def delete_entry(entry_id):
 
 
 
-
-
 @app.route("/register", methods=["POST"])
 def register():
     form_data = request.get_json()
@@ -115,7 +115,6 @@ def register():
     if user_data.exists:
         return jsonify({"exists": True})
 
-    import hashlib
     password_hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
     user_info = {
         "email": email,
@@ -134,10 +133,6 @@ def enter():
     user_data = db.collection("users").document(form_data["email"]).get()
     user_dict = user_data.to_dict() or {}
 
-    # user = User(form_data["email"], form_data["password"])
-    # user_data = db.collection("users").document(user.email).get()
-
-    import hashlib
     password_hash = hashlib.sha256(form_data["password"].encode("utf-8")).hexdigest()
 
     is_exist = user_data.exists 
@@ -153,7 +148,7 @@ def enter():
             user_dict.get("password"),
             is_admin=user_dict.get('isAdmin', False)
         )
-        # login_user(current_user)
+
         login_user(user)
         return respond
 

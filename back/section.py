@@ -8,7 +8,7 @@ class Section:
         self.description = data['description']
         self.counter = data['counter']
         data['users'] = []
-        self.users = data['users']
+        self.users = {"ArrayValue": data['users']}
 
         #self.user_data = user_data
 
