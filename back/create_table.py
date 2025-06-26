@@ -18,7 +18,7 @@ def import_data_to_file():
         data.append(doc_dict)
         # all_keys.update(doc_dict.keys())
 
-    columns = ["email", "isAdmin", "name"]
+    columns = ["email", "isAdmin", "name", "users"]
     # df = pd.DataFrame(data, columns=sorted(all_keys))
     df = pd.DataFrame(data, columns=columns)
 
