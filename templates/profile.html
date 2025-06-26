@@ -14,7 +14,7 @@
 
         <div class="user-info-grid">
             <div class="user-info-label">Имя:</div>
-            <div class="user-info-value">{{ user.first_name }}</div>
+            <div class="user-info-value">{{ user.name }}</div>
 
             <div class="user-info-label">Почта:</div>
             <div class="user-info-value">{{ user.email }}</div>
@@ -30,7 +30,7 @@
             <form method="POST" action="{{ url_for('update_user') }}">
                 <div class="user-info-grid">
                     <label class="user-info-label" for="first_name">Имя:</label>
-                    <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" required>
+                    <input type="text" id="first_name" name="name" value="{{ user.name }}" required>
 
                     <label class="user-info-label" for="email">Почта:</label>
                     <input type="email" id="email" name="email" value="{{ user.email }}" required>
