@@ -53,21 +53,34 @@ def account():
 
 
 
-# filepath: c:\Users\user\Desktop\opencv\Vifiel.github.io\main.py
 @app.route('/update-user', methods=['POST'])
 @login_required
 def update_user():
     user_ref = db.collection("users").document(current_user.email)
     updates = {}
-    if 'name' in request.form:
-        updates['name'] = request.form['name']
-    if 'email' in request.form:
-        updates['email'] = request.form['email']
-    if 'password' in request.form and request.form['password']:
-        import hashlib
-        updates['password'] = hashlib.sha256(request.form['password'].encode("utf-8")).hexdigest()
-    if updates:
+    data = request.form
+
+    updates['name'] = data.get('name')
+    updates['email'] = data.get('email')
+    if data.get('password'):
+        updates['password'] = hashlib.sha256(data.get('password').encode("utf-8")).hexdigest()
         user_ref.update(updates)
+    else:
+        user_ref.update(updates)
+        updates['password']= None
+
+    doc = user_ref.get().to_dict()
+    db.collection("users").document(updates['email']).set(doc)
+
+    user_ref.delete()
+
+    user = User(
+            updates["email"],
+            doc.get('password'),
+            is_admin=doc.get('isAdmin', False)
+        )
+
+    login_user(user)
     return redirect(url_for('account'))
 
 @app.route('/add-entry', methods=['POST'])
@@ -76,17 +89,6 @@ def add_entry():
     form_data = request.form.to_dict()
     db.collection("entries").add({
         "user_email": current_user.email,
-        "title": form_data["title"],
-        "content": form_data["content"]
-    })
-    return redirect(url_for('account'))
-
-@app.route('/update-entry/<entry_id>', methods=['POST'])
-@login_required
-def update_entry(entry_id):
-    form_data = request.form.to_dict()
-    entry_ref = db.collection("entries").document(entry_id)
-    entry_ref.update({
         "title": form_data["title"],
         "content": form_data["content"]
     })
@@ -148,7 +150,7 @@ def register():
 def enter():
     form_data = request.get_json()
     user_data = db.collection("users").document(form_data["email"]).get()
-    user_dict = user_data.to_dict() or {}
+    user_dict = user_data.to_dict()
 
     password_hash = hashlib.sha256(form_data["password"].encode("utf-8")).hexdigest()
 
