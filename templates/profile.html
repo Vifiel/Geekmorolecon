@@ -13,14 +13,17 @@
         <h2 class="account-title">Данные пользователя</h2>
 
         <div class="user-info-grid">
-            <div class="user-info-label">Имя:</div>
+            <div class="user-info-label">Ник:</div>
             <div class="user-info-value">{{ user.name }}</div>
 
             <div class="user-info-label">Почта:</div>
             <div class="user-info-value">{{ user.email }}</div>
 
+            <div class="user-info-label">Контакты:</div>
+            <div class="user-info-value">{{ user.contact }}</div>
+
             <div class="user-info-label">Пароль:</div>
-            <div class="user-info-value password-display">{{ '*' * user.password|length }}</div>
+            <div class="user-info-value password-display">*****</div>
         </div>
 
         <button class="edit-profile-btn" onclick="showEditForm('userEditForm')">Редактировать профиль</button>
@@ -48,10 +51,10 @@
     </div>
 
     <div class="account-card">
-        <h2 class="account-title">Записи пользователя</h2>
+        <h2 class="account-title">Партии на которые вы записаны</h2>
 
         {% if entries %}
-            <script>console.log("a")</script>
+
             <table class="entries-table">
                 <thead>
                     <tr>
