@@ -17,18 +17,15 @@ login_manager.anonymous_user = Anonymous
 
 @app.route('/', methods=["POST", "GET"])
 def display_data():
-    try:
-        users_ref = db.collection('section')
-        docs = users_ref.stream()
-        data = [doc.to_dict() for doc in docs]
+    users_ref = db.collection('section')
+    docs = users_ref.stream()
+    data = [doc.to_dict() for doc in docs]
 
-        print(current_user.isAdmin, current_user.is_authenticated)
+    print(current_user.isAdmin, current_user.is_authenticated)
 
-        return render_template('index.html', data=data, 
-                               is_admin=getattr(current_user, 'isAdmin', False), is_authenticated=current_user.is_authenticated)
+    return render_template('index.html', data=data, 
+                            is_admin=getattr(current_user, 'isAdmin', False), is_authenticated=current_user.is_authenticated)
 
-    except Exception as e:
-        return f"Ошибка получения данных: {str(e)}", 500
 
 
 @app.route("/account")
@@ -127,6 +124,8 @@ def register():
     email = form_data.get("email")
     password = form_data.get("password")
     name = form_data.get("name")
+    contact = form_data.get("contact")
+    image = ""
 
     user_ref = db.collection("users").document(email)
     user_data = user_ref.get()
@@ -139,6 +138,8 @@ def register():
         "email": email,
         "password": password_hash,
         "name": name,
+        "contact": contact,
+        "image": image,
         "isAdmin": False,
         "sections": []
     }
@@ -184,10 +185,8 @@ def createSection():
 
         if not current_section.isExist():
             current_section.post()
-            print('log: данные добавлены')
         else:
             current_section.update(form_data)
-            print('log: данные обновлены')
 
     return redirect(url_for("display_data"))
 
@@ -216,14 +215,6 @@ def entryToSection():
                 db.collection('section').document(form_data['name']).set(forSection, merge=True)
                 db.collection('users').document(form_data['email']).set(forUser, merge=True)
 
-                print('log: пользователь добавлен')
-            else:
-                print('log: пользователь уже записан')
-        else:
-            print('log: мест нет')
-    else:
-        print('please log in')
-
     return redirect(url_for("display_data"))
 
 @app.route("/logout")
@@ -242,7 +233,6 @@ def load_user(user_id):
 def download():
     import_data_to_file()
     return send_file("static/files/registredUsers.xlsx", as_attachment=True)
-
 
 
 if __name__ == "__main__":

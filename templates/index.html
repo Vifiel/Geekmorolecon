@@ -9,7 +9,7 @@
 <div class="fixed-header">
     <a href="/" class="header-title">Добро пожаловать на сайт!</a>
     <div class="header-buttons">
-        <button class="to-sections-btn" id="toSectionsBtn">К секциям</button>
+        <button class="to-sections-btn" id="toSectionsBtn">Запись на партии</button>
         {% if is_authenticated %}
             <button class="account-btn" onclick="window.location.href='/account'"></button>
             <button class="funcbtn" onclick="window.location.href='/logout'">Выйти</button> 
@@ -49,16 +49,20 @@
 <div class="form-popup" id="RegForm">
     <form id=regForm class="form-container" method="POST" action="/register">
 
-        <label for="name"><b>Имя</b></label>
-        <input type="text" placeholder="Введите ваше имя" name="name" id="regName" required>
+        <label for="name"><b>Ваш ник</b></label>
+        <input type="text" name="name" id="regName" required>
 
-        <label for="email"><b>Email</b></label>
-        <input type="email" placeholder="Введите email" name="email" id="regEmail" required>
+        <label for="email"><b>Ваш еmail</b></label>
+        <input type="email" name="email" id="regEmail" required>
 
         <p id="InDatabase"></p>
 
+
+        <label for="email"><b>Ваши контакты</b></label>
+        <input type="text" placeholder="Вк или тг" name="contact" id="regContact" required>
+
         <label for="password"><b>Пароль</b></label>
-        <input type="password" placeholder="Введите пароль" name="password" id="regPassword"required>
+        <input type="password" name="password" id="regPassword"required>
 
 
         <button type="submit" class="subbtn">Зарегистрироваться</button>

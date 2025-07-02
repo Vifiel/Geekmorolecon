@@ -16,7 +16,7 @@ if firebase_key:
 
     os.remove(temp_path)
 else:
-    key = "registration-64a55-firebase-adminsdk-fbsvc-8015080d81.json"
+    key = "registration-64a55-firebase-adminsdk-fbsvc-1cd4355a96.json"
 
     cred = firebase_admin.credentials.Certificate(key)
     firebase_admin.initialize_app(cred)
