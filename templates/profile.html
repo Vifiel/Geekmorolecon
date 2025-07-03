@@ -1,83 +1,92 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Личный кабинет</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_style.css') }}">
+    
+</head>
+<body>
+    <main class="account-container">
+        <div class="account-card">
+            <div class="account-header">
+                <button class="back-btn" onclick="window.location.href='/'">← Назад</button>
+            </div>
 
-{% block head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/profile_style.css') }}">
-{% endblock %}
+            <h2 class="account-title">Данные пользователя</h2>
 
-{% block content %}
-    <div class="account-card">
-        <div class="account-header">
-            <button class="back-btn" onclick="window.location.href='/'">← Назад</button>
+            <div class="user-info-grid">
+                <div class="user-info-label">Ник:</div>
+                <div class="user-info-value">{{ user.name }}</div>
+
+                <div class="user-info-label">Почта:</div>
+                <div class="user-info-value">{{ user.email }}</div>
+
+                <div class="user-info-label">Контакты:</div>
+                <div class="user-info-value">{{ user.contact }}</div>
+
+                <div class="user-info-label">Пароль:</div>
+                <div class="user-info-value password-display">*****</div>
+            </div>
+
+            <button class="edit-profile-btn" onclick="showEditForm('userEditForm')">Редактировать профиль</button>
+
+            <div id="userEditForm" class="edit-form" style="display: none;">
+                <h3>Редактирование профиля</h3>
+                <form method="POST" action="{{ url_for('update_user') }}">
+                    <div class="user-info-grid">
+                        <label class="user-info-label" for="first_name">Имя:</label>
+                        <input type="text" id="first_name" name="name" value="{{ user.name }}" required>
+
+                        <label class="user-info-label" for="email">Почта:</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" required>
+
+                        <label class="user-info-label" for="password">Новый пароль:</label>
+                        <input type="password" id="password" name="password" placeholder="Оставьте пустым, чтобы не менять">
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button type="submit" class="edit-profile-btn">Сохранить изменения</button>
+                        <button type="button" class="edit-profile-btn" onclick="hideEditForm('userEditForm')" style="background: #777; margin-left: 10px;">Отмена</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
-        <h2 class="account-title">Данные пользователя</h2>
+        <div class="account-card">
+            <h2 class="account-title">Партии на которые вы записаны</h2>
 
-        <div class="user-info-grid">
-            <div class="user-info-label">Ник:</div>
-            <div class="user-info-value">{{ user.name }}</div>
+            {% if entries %}
 
-            <div class="user-info-label">Почта:</div>
-            <div class="user-info-value">{{ user.email }}</div>
-
-            <div class="user-info-label">Контакты:</div>
-            <div class="user-info-value">{{ user.contact }}</div>
-
-            <div class="user-info-label">Пароль:</div>
-            <div class="user-info-value password-display">*****</div>
+                <table class="entries-table">
+                    <thead>
+                        <tr>
+                            <th>Название</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in entries %}
+                        <tr>
+                            <td>{{ entry.id }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}" style="display: inline;">
+                                        <button type="submit" class="action-btn">Удалить</button>
+                                    </form>
+                                </div>
+                            </td>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p style="text-align: center; color: #777;">Нет записей</p>
+            {% endif %}
         </div>
+    </main>
 
-        <button class="edit-profile-btn" onclick="showEditForm('userEditForm')">Редактировать профиль</button>
+    <script src="{{url_for('static', filename='js/sc_prof.js')}}"></script>
+</body>
+</html>
 
-        <div id="userEditForm" class="edit-form" style="display: none;">
-            <h3>Редактирование профиля</h3>
-            <form method="POST" action="{{ url_for('update_user') }}">
-                <div class="user-info-grid">
-                    <label class="user-info-label" for="first_name">Имя:</label>
-                    <input type="text" id="first_name" name="name" value="{{ user.name }}" required>
-
-                    <label class="user-info-label" for="email">Почта:</label>
-                    <input type="email" id="email" name="email" value="{{ user.email }}" required>
-
-                    <label class="user-info-label" for="password">Новый пароль:</label>
-                    <input type="password" id="password" name="password" placeholder="Оставьте пустым, чтобы не менять">
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button type="submit" class="edit-profile-btn">Сохранить изменения</button>
-                    <button type="button" class="edit-profile-btn" onclick="hideEditForm('userEditForm')" style="background: #777; margin-left: 10px;">Отмена</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="account-card">
-        <h2 class="account-title">Партии на которые вы записаны</h2>
-
-        {% if entries %}
-
-            <table class="entries-table">
-                <thead>
-                    <tr>
-                        <th>Название</th>
-                        <th>Действия</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entry in entries %}
-                    <tr>
-                        <td>{{ entry.id }}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <form method="POST" action="{{ url_for('delete_entry', entry_id=entry.id) }}" style="display: inline;">
-                                    <button type="submit" class="action-btn">Удалить</button>
-                                </form>
-                            </div>
-                        </td>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p style="text-align: center; color: #777;">Нет записей</p>
-        {% endif %}
-    </div>
-{% endblock %}
