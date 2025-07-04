@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const toSectionsBtn = document.getElementById("toSectionsBtn");
 
 
+
     document.querySelectorAll('.dropdown-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
             const dropdownContent = btn.parentElement.querySelector('.dropdown-content');
