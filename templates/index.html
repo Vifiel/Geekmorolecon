@@ -2,14 +2,15 @@
 <html>
 <head>
    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}"> 
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='geekmoicon.ico') }}">
 </head>
 <body>
 
 <!-- плашка (шапка) сверху сайта -->
 <div class="fixed-header">
-    <a href="/" class="header-title">Добро пожаловать на сайт!</a>
+    <a href="/" class="header-title">Geekmoролекон 2030</a>
     <div class="header-buttons">
-        <button class="to-sections-btn" id="toSectionsBtn">Запись на партии</button>
+        <button class="to-sections-btn" onclick="window.location.href='/games'">Запись на партии</button>
         {% if is_authenticated %}
             <button class="account-btn" onclick="window.location.href='/account'"></button>
             <button class="funcbtn" onclick="window.location.href='/logout'">Выйти</button> 
@@ -138,9 +139,6 @@
     </div>
     {% endfor %}
 </div>
-
-
-<p>is_authenticated: {{ is_authenticated }}, is_admin: {{ is_admin }}</p>
 
 
 <script src="{{url_for('static', filename='js/sc.js')}}"></script>

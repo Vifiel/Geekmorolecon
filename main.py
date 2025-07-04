@@ -7,7 +7,7 @@ from database.init_db import db
 import hashlib
 
 app = Flask("Reg")
-app.secret_key = "your-very-secret-key"
+app.secret_key = "secret_key"
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -20,8 +20,6 @@ def display_data():
     users_ref = db.collection('section')
     docs = users_ref.stream()
     data = [doc.to_dict() for doc in docs]
-
-    print(current_user.isAdmin, current_user.is_authenticated)
 
     return render_template('index.html', data=data, 
                             is_admin=getattr(current_user, 'isAdmin', False), is_authenticated=current_user.is_authenticated)
@@ -48,7 +46,10 @@ def account():
         entries=entries
     )
 
+@app.route("/games")
+def games():
 
+    return render_template("games.html")
 
 @app.route('/update-user', methods=['POST'])
 @login_required
