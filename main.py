@@ -4,10 +4,12 @@ from back.section import Section
 from back.user import User, UserData, Anonymous
 from back.create_table import import_data_to_file
 from database.init_db import db
+from flask_cors import CORS
 import hashlib
 
 app = Flask("Reg")
 app.secret_key = "secret_key"
+CORS(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -15,10 +17,8 @@ login_manager.init_app(app)
 login_manager.anonymous_user = Anonymous
 
 
-@app.route('/', methods=["POST", "GET"])
+@app.route('/api/', methods=["POST", "GET"])
 def display_data():
-    users_ref = db.collection('section')
-    docs = users_ref.stream()
     data = [doc.to_dict() for doc in docs]
 
     return render_template('index.html', data=data, 
@@ -26,7 +26,7 @@ def display_data():
 
 
 
-@app.route("/account")
+@app.route("/api/account")
 @login_required
 def account():
     # Получаем данные пользователя из Firestore
@@ -40,18 +40,24 @@ def account():
         entries.append(entry.to_dict())
         entries[-1].update({"id": entry.id})
 
-    return render_template(
-        "profile.html",
-        user=user_dict,
-        entries=entries
-    )
+    return jsonify({
+            "user":user_dict,
+            "games":entries
+            })
 
-@app.route("/games")
+@app.route("/api/games")
 def games():
+    users_ref = db.collection('section')
+    docs = users_ref.stream()
 
-    return render_template("games.html")
+    data = []
+    for doc in docs:
+        data.append(doc.to_dict())
 
-@app.route('/update-user', methods=['POST'])
+
+    return jsonify(data)
+
+@app.route('/api/update-user', methods=['POST'])
 @login_required
 def update_user():
     user_ref = db.collection("users").document(current_user.email)
@@ -79,9 +85,9 @@ def update_user():
         )
 
     login_user(user)
-    return redirect(url_for('account'))
+    return "ok"
 
-@app.route('/add-entry', methods=['POST'])
+@app.route('/api/add-entry', methods=['POST'])
 @login_required
 def add_entry():
     form_data = request.form.to_dict()
@@ -93,7 +99,7 @@ def add_entry():
     return redirect(url_for('account'))
 
 
-@app.route('/delete-entry/<entry_id>', methods=['POST'])
+@app.route('/api/delete-entry/<entry_id>', methods=['POST'])
 @login_required
 def delete_entry(entry_id):
     email = current_user.email
@@ -115,11 +121,11 @@ def delete_entry(entry_id):
 
     db.collection("users").document(email).set(user)
 
-    return redirect(url_for('account'))
+    return "ok"
 
 
 
-@app.route("/register", methods=["POST"])
+@app.route("/api/register", methods=["POST"])
 def register():
     form_data = request.get_json()
     email = form_data.get("email")
@@ -148,7 +154,7 @@ def register():
     return jsonify({"exists": False})
 
 
-@app.route("/enter", methods=["POST"])
+@app.route("/api/enter", methods=["POST"])
 def enter():
     form_data = request.get_json()
     user_data = db.collection("users").document(form_data["email"]).get()
@@ -173,7 +179,7 @@ def enter():
         login_user(user)
         return respond
 
-@app.route("/createSection", methods=["POST"])
+@app.route("/api/createSection", methods=["POST"])
 def createSection():
 
     user_data = db.collection("users").document(current_user.email).get()
@@ -189,9 +195,9 @@ def createSection():
         else:
             current_section.update(form_data)
 
-    return redirect(url_for("display_data"))
+    return "ok"
 
-@app.route("/entryToSection", methods=["POST"])
+@app.route("/api/entryToSection", methods=["POST"])
 @login_required
 def entryToSection():
     form_data = request.form.to_dict()
@@ -216,13 +222,13 @@ def entryToSection():
                 db.collection('section').document(form_data['name']).set(forSection, merge=True)
                 db.collection('users').document(form_data['email']).set(forUser, merge=True)
 
-    return redirect(url_for("display_data"))
+    return "ok"
 
-@app.route("/logout")
+@app.route("/api/logout")
 @login_required
 def logout():
     logout_user()
-    return redirect(url_for("display_data"))
+    return "ok"
 
 
 @login_manager.user_loader
@@ -230,7 +236,7 @@ def load_user(user_id):
     # user_id - это email
     return User.get(user_id)
 
-@app.route("/download")
+@app.route("/api/download")
 def download():
     import_data_to_file()
     return send_file("static/files/registredUsers.xlsx", as_attachment=True)
