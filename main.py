@@ -29,7 +29,6 @@ def display_data():
 
 
 @app.route("/api/account")
-@login_required
 def account():
     # Получаем данные пользователя из Firestore
     user_data = db.collection("users").document(current_user.email).get()
@@ -59,7 +58,6 @@ def games():
     return jsonify(data)
 
 @app.route('/api/update-user', methods=['POST'])
-@login_required
 def update_user():
     user_ref = db.collection("users").document(current_user.email)
     updates = {}
@@ -90,7 +88,6 @@ def update_user():
 
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
-@login_required
 def delete_entry(entry_id):
     email = current_user.email
 
@@ -188,7 +185,6 @@ def createSection():
     return "ok"
 
 @app.route("/api/entryToSection", methods=["POST"])
-@login_required
 def entryToSection():
     form_data = request.form.to_dict()
 
