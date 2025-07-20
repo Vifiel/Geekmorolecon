@@ -19,6 +19,8 @@ login_manager.anonymous_user = Anonymous
 
 @app.route('/api/', methods=["POST", "GET"])
 def display_data():
+    users_ref = db.collection('section')
+    docs = users_ref.stream()
     data = [doc.to_dict() for doc in docs]
 
     return render_template('index.html', data=data, 
@@ -41,19 +43,18 @@ def account():
         entries[-1].update({"id": entry.id})
 
     return jsonify({
-            "user":user_dict,
-            "games":entries
-            })
+        "user":user_dict,
+        "games":entries
+        })
 
 @app.route("/api/games")
 def games():
-    users_ref = db.collection('section')
-    docs = users_ref.stream()
+    
+    games = db.collection("section").stream()
 
     data = []
-    for doc in docs:
-        data.append(doc.to_dict())
-
+    for game in games:
+        data.append(game.to_dict())
 
     return jsonify(data)
 
@@ -86,17 +87,6 @@ def update_user():
 
     login_user(user)
     return "ok"
-
-@app.route('/api/add-entry', methods=['POST'])
-@login_required
-def add_entry():
-    form_data = request.form.to_dict()
-    db.collection("entries").add({
-        "user_email": current_user.email,
-        "title": form_data["title"],
-        "content": form_data["content"]
-    })
-    return redirect(url_for('account'))
 
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
