@@ -9,7 +9,7 @@ import hashlib
 
 app = Flask("Reg")
 app.secret_key = "secret_key"
-CORS(app)
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
 login_manager = LoginManager()
 login_manager.init_app(app)
