@@ -1,21 +1,20 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
-from flask_login import login_user, logout_user, login_required, current_user, LoginManager
 from back.section import Section
 from back.user import User, UserData, Anonymous
 from back.create_table import import_data_to_file
 from database.init_db import db
 from flask_cors import CORS
+from flask_jwt_extended import create_access_token, get_jwt,get_jwt_identity,unset_jwt_cookies,jwt_required, JWTManager, current_user
+from datetime import timedelta
 import hashlib
 
 app = Flask("Reg")
 app.secret_key = "secret_key"
 CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 
-login_manager = LoginManager()
-login_manager.init_app(app)
-
-login_manager.anonymous_user = Anonymous
-
+app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+jwt = JWTManager(app)
 
 @app.route('/api/', methods=["POST", "GET"])
 def display_data():
@@ -26,10 +25,33 @@ def display_data():
     return render_template('index.html', data=data, 
                             is_admin=getattr(current_user, 'isAdmin', False), is_authenticated=current_user.is_authenticated)
 
+@app.after_request
+def refresh_expiring_jwts(response):
+    try:
+        exp_timestamp = get_jwt()["exp"]
+        now = datetime.now(timezone.utc)
+        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
+        if target_timestamp > exp_timestamp:
+            access_token = create_access_token(identity=get_jwt_identity())
+            data = response.get_json()
+            if type(data) is dict:
+                data["access_token"] = access_token 
+                response.data = json.dumps(data)
+        return response
+    except (RuntimeError, KeyError):
+        return response
 
+@jwt.user_identity_loader
+def user_identity_loader(user):
+    return user.email
+
+@jwt.user_lookup_loader
+def user_lookup_callback(_jwt_header, jwt_data):
+    identity = jwt_data["sub"]
+    return db.collection("users").document(id=identity)
 
 @app.route("/api/account")
-@login_required
+@jwt_required()
 def account():
     # Получаем данные пользователя из Firestore
     user_data = db.collection("users").document(current_user.email).get()
@@ -59,7 +81,7 @@ def games():
     return jsonify(data)
 
 @app.route('/api/update-user', methods=['POST'])
-@login_required
+@jwt_required()
 def update_user():
     user_ref = db.collection("users").document(current_user.email)
     updates = {}
@@ -85,7 +107,6 @@ def update_user():
             is_admin=doc.get('isAdmin', False)
         )
 
-    login_user(user)
     return "ok"
 
 
@@ -154,10 +175,10 @@ def enter():
     is_exist = user_data.exists 
     is_pass_match = user_data.get("password") == password_hash
 
-    respond = jsonify({"exists": user_data.exists, "passMatch": is_pass_match})
+    respond = {"exists": user_data.exists, "passMatch": is_pass_match, "token":None}
 
     if not is_exist or not is_pass_match:
-        return respond
+        return jsonify(respond)
     else:
         user = User(
             form_data["email"],
@@ -165,8 +186,10 @@ def enter():
             is_admin=user_dict.get('isAdmin', False)
         )
 
-        login_user(user)
-        return respond
+        token = create_access_token(identity=user)
+        respond["token"] = token
+        return jsonify(respond)
+
 
 @app.route("/api/createSection", methods=["POST"])
 def createSection():
@@ -212,17 +235,11 @@ def entryToSection():
 
     return "ok"
 
-@app.route("/api/logout")
-@login_required
+@app.route("/logout", methods=["POST"])
 def logout():
-    logout_user()
-    return "ok"
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    # user_id - это email
-    return User.get(user_id)
+    response = jsonify({"msg": "logout successful"})
+    unset_jwt_cookies(response)
+    return response
 
 @app.route("/api/download")
 def download():
