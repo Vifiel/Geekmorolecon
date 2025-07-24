@@ -53,21 +53,6 @@ def account():
         "user":user_dict,
         })
 
-@app.route("/api/userGames")
-@jwt_required()
-def userGames():
-
-    # Получаем записи пользователя 
-    entries_ref = db.collection("section").where( "users", "array_contains", current_user.email).stream()
-    entries = []
-    for entry in entries_ref:
-        entries.append(entry.to_dict())
-        entries[-1].update({"id": entry.id})
-    
-    return jsonify({   
-        "games":entries
-    })
-
 @app.route("/api/games")
 def games():
     
@@ -80,7 +65,7 @@ def games():
         users = []
         users_ref = db.collection("users").where("sections", "array_contains", game["name"]).stream()
         for user in users_ref:
-            users.append(user)
+            users.append(user.get("name"))
         game["users"] = users
         data.append("game")
 
