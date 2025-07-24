@@ -103,28 +103,6 @@ def update_user():
     return jsonify({"token": token})
 
 
-@app.route('/api/delete-entry/<entry_id>', methods=['POST'])
-def delete_entry(entry_id):
-    email = current_user.email
-
-    section_ref = db.collection("section").document(entry_id).get()
-    section = section_ref.to_dict()
-    
-    ind = section["users"].index(email)
-    section["users"].pop(ind)
-    section["counter"] = str(int(section["counter"]) + 1)
-
-    db.collection("section").document(entry_id).set(section)
-
-    user_ref = db.collection("users").document(email).get()
-    user = user_ref.to_dict()
-
-    ind = user["sections"].index(entry_id)
-    user["sections"].pop(ind)
-
-    db.collection("users").document(email).set(user)
-
-    return "ok"
 
 
 
@@ -232,6 +210,27 @@ def entryToSection():
 
             db.collection('section').document(form_data['name']).set(forSection, merge=True)
             db.collection('users').document(form_data['email']).set(forUser, merge=True)
+
+    return "ok"
+
+@app.route('/api/delete-entry/<entry_id>', methods=['POST'])
+def delete_entry(entry_id):
+    email = current_user.email
+
+    section_ref = db.collection("section").document(entry_id).get()
+    section = section_ref.to_dict()
+    
+    section["counter"] = str(int(section["counter"]) + 1)
+
+    db.collection("section").document(entry_id).set(section)
+
+    user_ref = db.collection("users").document(email).get()
+    user = user_ref.to_dict()
+
+    ind = user["sections"].index(entry_id)
+    user["sections"].pop(ind)
+
+    db.collection("users").document(email).set(user)
 
     return "ok"
 

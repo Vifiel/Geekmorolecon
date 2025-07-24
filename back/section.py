@@ -9,18 +9,13 @@ class Section:
         self.places = data['places']
         self.date = data['date']
         self.time = data['time']
-        self.counter = data['counter']
+        self.counter = data['places']
         
         self.master = data['master']
         self.masteClub = data['masterClub']
         self.system = data['system']
 
         self.image = ""
-        data['users'] = []
-        self.users = {"ArrayValue": data['users']}
-
-        #self.user_data = user_data
-
 
     def isExist(self):
         section_data = db.collection("section").document(self.name).get()
