@@ -6,7 +6,16 @@ class Section:
         self.data = data
         self.name = data['name']
         self.description = data['description']
+        self.places = data['places']
+        self.date = data['date']
+        self.time = data['time']
         self.counter = data['counter']
+        
+        self.master = data['master']
+        self.masteClub = data['masterClub']
+        self.system = data['system']
+
+        self.image = ""
         data['users'] = []
         self.users = {"ArrayValue": data['users']}
 

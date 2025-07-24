@@ -22,13 +22,11 @@ class User(UserMixin):
             user_dict = user_data.to_dict() or {}
             return User(
                 email=email,
+                contact=contact,
                 password=user_dict.get('password'),
                 is_admin=user_dict.get("isAdmin", False)
             )
         return None
-
-class Anonymous(AnonymousUserMixin):
-    isAdmin = False
 
 class UserData(User):
     def __init__(self, data):

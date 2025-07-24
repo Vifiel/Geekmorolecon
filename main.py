@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 from back.section import Section
-from back.user import User, UserData, Anonymous
+from back.user import User, UserData
 from back.create_table import import_data_to_file
 from database.init_db import db
 from flask_cors import CORS
@@ -16,14 +16,6 @@ app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
 
-@app.route('/api/', methods=["POST", "GET"])
-def display_data():
-    users_ref = db.collection('section')
-    docs = users_ref.stream()
-    data = [doc.to_dict() for doc in docs]
-
-    return render_template('index.html', data=data, 
-                            is_admin=getattr(current_user, 'isAdmin', False), is_authenticated=current_user.is_authenticated)
 
 @app.after_request
 def refresh_expiring_jwts(response):
@@ -57,17 +49,24 @@ def account():
     user_data = db.collection("users").document(current_user.email).get()
     user_dict = user_data.to_dict() or {}
 
+    return jsonify({
+        "user":user_dict,
+        })
+
+@app.route("/api/userGames")
+@jwt_required()
+def userGames():
+
     # Получаем записи пользователя 
     entries_ref = db.collection("section").where( "users", "array_contains", current_user.email).stream()
     entries = []
     for entry in entries_ref:
         entries.append(entry.to_dict())
         entries[-1].update({"id": entry.id})
-
-    return jsonify({
-        "user":user_dict,
+    
+    return jsonify({   
         "games":entries
-        })
+    })
 
 @app.route("/api/games")
 def games():
@@ -76,7 +75,14 @@ def games():
 
     data = []
     for game in games:
-        data.append(game.to_dict())
+        game = game.to_dict()
+        
+        users = []
+        users_ref = db.collection("users").where("sections", "array_contains", game["name"]).stream()
+        for user in users_ref:
+            users.append(user)
+        game["users"] = users
+        data.append("game")
 
     return jsonify(data)
 
@@ -103,11 +109,13 @@ def update_user():
 
     user = User(
             updates["email"],
-            doc.get('password'),
-            is_admin=doc.get('isAdmin', False)
+            doc.get("password"),
+            is_admin=doc.get("isAdmin", False)
         )
 
-    return "ok"
+    unset_jwt_cookies()
+    token = create_access_token(identity=user)
+    return jsonify({"token": token})
 
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
@@ -148,7 +156,7 @@ def register():
     user_data = user_ref.get()
 
     if user_data.exists:
-        return jsonify({"exists": True})
+        return jsonify({"exists": True, "token": ""})
 
     password_hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
     user_info = {
@@ -161,7 +169,16 @@ def register():
         "sections": []
     }
     user_ref.set(user_info)
-    return jsonify({"exists": False})
+    user_data = user_ref.get()
+
+    user = User(
+            user_data.get("email"),
+            user_data.get("password"),
+            user_data.get("isAdmin")
+            )
+    token = create_access_token(identity=user)
+
+    return jsonify({"exists": False, "token": token})
 
 
 @app.route("/api/enter", methods=["POST"])
@@ -210,28 +227,26 @@ def createSection():
     return "ok"
 
 @app.route("/api/entryToSection", methods=["POST"])
+@jwt_required()
 def entryToSection():
     form_data = request.form.to_dict()
 
-    if current_user.is_authenticated:
-        form_data['email'] = current_user.email
+    form_data['email'] = current_user.email
 
-        forUser, forSection = {}, {}
+    forUser, forSection = {}, {}
 
-        usersFrSection = db.collection('section').document(form_data['name']).get().to_dict()
-        sectionsFrUser = db.collection('users').document(form_data['email']).get().to_dict()
+    usersFrSection = db.collection('section').document(form_data['name']).get().to_dict()
+    sectionsFrUser = db.collection('users').document(form_data['email']).get().to_dict()
 
-        if int(usersFrSection['counter']) > 0:
-            if form_data['email'] not in usersFrSection['users'] and form_data['name'] not in sectionsFrUser['sections']:
-                usersFrSection['users'].append(form_data['email'])
-                sectionsFrUser['sections'].append(form_data['name'])
+    if int(usersFrSection['counter']) > 0:
+        if form_data['name'] not in sextionsFrUser['sections']:
+            sectionsFrUser['sections'].append(form_data['name'])
 
-                forUser['sections'] = sectionsFrUser['sections']
-                forSection['users'] = usersFrSection['users']
-                forSection['counter'] = str(int(usersFrSection['counter']) - 1)
+            forUser['sections'] = sectionsFrUser['sections']
+            forSection['counter'] = str(int(usersFrSection['counter']) - 1)
 
-                db.collection('section').document(form_data['name']).set(forSection, merge=True)
-                db.collection('users').document(form_data['email']).set(forUser, merge=True)
+            db.collection('section').document(form_data['name']).set(forSection, merge=True)
+            db.collection('users').document(form_data['email']).set(forUser, merge=True)
 
     return "ok"
 
