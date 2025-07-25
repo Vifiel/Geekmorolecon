@@ -237,7 +237,7 @@ def delete_entry(entry_id):
 
     return "ok"
 
-@app.route("/logout", methods=["POST"])
+@app.route("/api/logout")
 def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
