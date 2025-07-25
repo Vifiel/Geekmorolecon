@@ -1,3 +1,5 @@
+import json
+
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
 from back.section import Section
 from back.user import User, UserData
@@ -5,7 +7,7 @@ from back.create_table import import_data_to_file
 from database.init_db import db
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt,get_jwt_identity,unset_jwt_cookies,jwt_required, JWTManager, current_user
-from datetime import timedelta
+from datetime import timedelta, datetime, timezone
 import hashlib
 
 app = Flask("Reg")
@@ -40,13 +42,14 @@ def user_identity_loader(user):
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    return db.collection("users").document(id=identity)
+    user_snapshot = db.collection("users").document(identity).get()
+    return user_snapshot.to_dict() if user_snapshot.exists else None
 
 @app.route("/api/account")
 @jwt_required()
 def account():
     # Получаем данные пользователя из Firestore
-    user_data = db.collection("users").document(current_user.email).get()
+    user_data = db.collection("users").document(current_user["email"]).get()
     user_dict = user_data.to_dict() or {}
 
     return jsonify({
@@ -67,7 +70,7 @@ def games():
         for user in users_ref:
             users.append(user.get("name"))
         game["users"] = users
-        data.append("game")
+        data.append(game)
 
     return jsonify(data)
 
@@ -202,7 +205,7 @@ def entryToSection():
     sectionsFrUser = db.collection('users').document(form_data['email']).get().to_dict()
 
     if int(usersFrSection['counter']) > 0:
-        if form_data['name'] not in sextionsFrUser['sections']:
+        if form_data['name'] not in sectionsFrUser['sections']:
             sectionsFrUser['sections'].append(form_data['name'])
 
             forUser['sections'] = sectionsFrUser['sections']
