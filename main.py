@@ -17,21 +17,6 @@ app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
 
 
-@app.after_request
-def refresh_expiring_jwts(response):
-    try:
-        exp_timestamp = get_jwt()["exp"]
-        now = datetime.now(timezone.utc)
-        target_timestamp = datetime.timestamp(now + timedelta(minutes=30))
-        if target_timestamp > exp_timestamp:
-            access_token = create_access_token(identity=get_jwt_identity())
-            data = response.get_json()
-            if type(data) is dict:
-                data["access_token"] = access_token 
-                response.data = json.dumps(data)
-        return response
-    except (RuntimeError, KeyError):
-        return response
 
 @jwt.user_identity_loader
 def user_identity_loader(user):
@@ -40,14 +25,13 @@ def user_identity_loader(user):
 @jwt.user_lookup_loader
 def user_lookup_callback(_jwt_header, jwt_data):
     identity = jwt_data["sub"]
-    return db.collection("users").document(id=identity)
+    return db.collection("users").document(identity)
 
 @app.route("/api/account")
 @jwt_required()
 def account():
     # Получаем данные пользователя из Firestore
-    user_data = db.collection("users").document(current_user.email).get()
-    user_dict = user_data.to_dict() or {}
+    user_dict = current_user.get().to_dict() or {}
 
     return jsonify({
         "user":user_dict,
@@ -74,7 +58,7 @@ def games():
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
 def update_user():
-    user_ref = db.collection("users").document(current_user.email)
+    user_ref = current_user
     updates = {}
     data = request.form
 
@@ -174,8 +158,8 @@ def enter():
 @app.route("/api/createSection", methods=["POST"])
 def createSection():
 
-    user_data = db.collection("users").document(current_user.email).get()
-    if current_user.isAdmin == False:
+    user_data = current_user.get().to_dict()
+    if user_data["isAdmin"] == False:
         return "Доступ запрещён", 403
     else:
         form_data = request.form.to_dict()
@@ -192,31 +176,27 @@ def createSection():
 @app.route("/api/entryToSection", methods=["POST"])
 @jwt_required()
 def entryToSection():
-    form_data = request.form.to_dict()
-
-    form_data['email'] = current_user.email
+    form_data = request.get_json()
 
     forUser, forSection = {}, {}
 
-    usersFrSection = db.collection('section').document(form_data['name']).get().to_dict()
-    sectionsFrUser = db.collection('users').document(form_data['email']).get().to_dict()
+    usersFrSection = db.collection('section').document(form_data['id']).get().to_dict()
+    sectionsFrUser = current_user.get().to_dict()
 
     if int(usersFrSection['counter']) > 0:
-        if form_data['name'] not in sextionsFrUser['sections']:
-            sectionsFrUser['sections'].append(form_data['name'])
+        if form_data['id'] not in sectionsFrUser['sections']:
+            sectionsFrUser['sections'].append(form_data['id'])
 
             forUser['sections'] = sectionsFrUser['sections']
             forSection['counter'] = str(int(usersFrSection['counter']) - 1)
 
-            db.collection('section').document(form_data['name']).set(forSection, merge=True)
-            db.collection('users').document(form_data['email']).set(forUser, merge=True)
+            db.collection('section').document(form_data['id']).set(forSection, merge=True)
+            current_user.set(forUser, merge=True)
 
     return "ok"
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
 def delete_entry(entry_id):
-    email = current_user.email
-
     section_ref = db.collection("section").document(entry_id).get()
     section = section_ref.to_dict()
     
@@ -224,7 +204,7 @@ def delete_entry(entry_id):
 
     db.collection("section").document(entry_id).set(section)
 
-    user_ref = db.collection("users").document(email).get()
+    user_ref = current_user.get()
     user = user_ref.to_dict()
 
     ind = user["sections"].index(entry_id)
