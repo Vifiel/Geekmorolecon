@@ -55,16 +55,30 @@ def games():
     for game in games:
         game_id = game.id
         game = game.to_dict()
-        
-        users = []
-        users_ref = db.collection("users").where("sections", "array_contains", game["name"]).stream()
-        for user in users_ref:
-            users.append(user.get("name"))
-        game["users"] = users
         game["id"] = game_id
         data.append(game)
 
     return jsonify(data)
+
+
+@app.route("/api/games/<id>")
+def game_by_id(id):
+    game_ref = db.collection("section").document(id).get()
+
+    if not game_ref.exists:
+        return jsonify({"error": "Game not found"}), 500
+
+    game = game_ref.to_dict()
+    game["id"] = id
+
+    users = []
+    users_ref = db.collection("users").where("sections", "array_contains", game["id"]).stream()
+    for user in users_ref:
+        users.append(user.get("name"))
+
+    game["users"] = users
+
+    return jsonify(game)
 
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
