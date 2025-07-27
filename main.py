@@ -53,6 +53,7 @@ def games():
 
     data = []
     for game in games:
+        game_id = game.id
         game = game.to_dict()
         
         users = []
@@ -60,6 +61,7 @@ def games():
         for user in users_ref:
             users.append(user.get("name"))
         game["users"] = users
+        game["id"] = game_id
         data.append(game)
 
     return jsonify(data)
