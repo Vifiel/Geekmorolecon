@@ -1,14 +1,21 @@
 import json
 
 from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
+from flask_cors import CORS
+from flask_jwt_extended import create_access_token, get_jwt,get_jwt_identity,unset_jwt_cookies,jwt_required, JWTManager, current_user
+
 from back.section import Section
 from back.user import User, UserData
 from back.create_table import import_data_to_file
+
 from database.init_db import db
-from flask_cors import CORS
-from flask_jwt_extended import create_access_token, get_jwt,get_jwt_identity,unset_jwt_cookies,jwt_required, JWTManager, current_user
+
 from datetime import timedelta, datetime, timezone
+
 import hashlib
+
+import base64
+
 
 app = Flask("Reg")
 app.secret_key = "secret_key"
@@ -17,7 +24,6 @@ CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
 jwt = JWTManager(app)
-
 
 
 @jwt.user_identity_loader
@@ -166,8 +172,13 @@ def createSection():
         return "Доступ запрещён", 403
     else:
         form_data = request.form.to_dict()
-
         current_section = Section(form_data)
+
+        if "image" in request.files:
+            image = request.files["image"]
+            image.save(f"static/images/games/{current_secton.id}")
+        else:
+            current_section.image = "http://localhost:5000/static/imges/games/blank.png"
 
         if not current_section.isExist():
             current_section.post()
