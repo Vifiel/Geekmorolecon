@@ -18,7 +18,7 @@ class Section:
         self.system = data['system']
         self.id = str(uuid.uuid4())
 
-        self.image = f"http://localhost:5000/image/games/{self.id}"
+        self.image = f"http://localhost:5000/images/games/{self.id}"
 
     def isExist(self):
         section_data = db.collection("section").document(self.id).get()

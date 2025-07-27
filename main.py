@@ -178,7 +178,7 @@ def createSection():
             image = request.files["image"]
             image.save(f"static/images/games/{current_secton.id}.jpg")
         else:
-            current_section.image = "http://localhost:5000/static/imges/games/blank.png"
+            current_section.image = "http://localhost:5000/static/images/games/blank.png"
 
         if not current_section.isExist():
             current_section.post()
