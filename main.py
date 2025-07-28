@@ -61,15 +61,15 @@ def games():
     return jsonify(data)
 
 
-@app.route("/api/games/<id>")
-def game_by_id(id):
-    game_ref = db.collection("section").document(id).get()
+@app.route("/api/games/<game_id>")
+def game_by_id(game_id):
+    game_ref = db.collection("section").document(game_id).get()
 
     if not game_ref.exists:
         return jsonify({"error": "Game not found"}), 500
 
     game = game_ref.to_dict()
-    game["id"] = id
+    game["id"] = game_id
 
     users = []
     users_ref = db.collection("users").where("sections", "array_contains", game["id"]).stream()
@@ -79,6 +79,21 @@ def game_by_id(id):
     game["users"] = users
 
     return jsonify(game)
+
+@app.route("/api/user-games")
+@jwt_required()
+def user_games():
+    ids = current_user.get().to_dict()["sections"]
+    
+    data = []
+    for game_id in ids:
+        game = db.collection("sections").document(game_id).get().to_dict()
+        game["id"] = game_id
+
+        data.append(game)
+
+    return jsonify(data)
+
 
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
@@ -234,13 +249,12 @@ def delete_entry(entry_id):
 
     db.collection("section").document(entry_id).set(section)
 
-    user_ref = current_user.get()
-    user = user_ref.to_dict()
+    user = current_user.get().to_dict()
 
     ind = user["sections"].index(entry_id)
     user["sections"].pop(ind)
 
-    db.collection("users").document(email).set(user)
+    current_user.set(user)
 
     return "ok"
 
