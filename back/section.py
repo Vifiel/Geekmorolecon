@@ -12,10 +12,13 @@ class Section:
         self.time = data['time']
         self.counter = data['places']
         data['counter'] = self.counter
+        self.type = data["type"]
         
-        self.master = data['master']
-        self.masteClub = data['masterClub']
-        self.system = data['system']
+        if self.type == "Партия":
+            self.master = data['master']
+            self.masteClub = data['masterClub']
+            self.system = data['system']
+
         self.id = str(uuid.uuid4())
 
         self.image = f"http://localhost:5000/static/images/games/{self.id}.jpg"
