@@ -196,6 +196,7 @@ def enter():
 
 
 @app.route("/api/createSection", methods=["POST"])
+@jwt_required()
 def createSection():
 
     user_data = current_user.get().to_dict()
@@ -241,6 +242,7 @@ def entryToSection():
     return "ok"
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
+@jwt_required()
 def delete_entry(entry_id):
     section_ref = db.collection("section").document(entry_id).get()
     section = section_ref.to_dict()
@@ -258,6 +260,42 @@ def delete_entry(entry_id):
 
     return "ok"
 
+@app.route('/api/delete-entry/<section_id>/<user_id>')
+@jwt_required()
+def admin_delete_entry(section_id, user_id):
+
+    if current_user.get("isAdmin") == False:
+        return "Доступ запрещён", 403
+    else:
+        section_ref = db.collection("section").document(entry_id).get()
+        section = section_ref.to_dict()
+        
+        section["counter"] = str(int(section["counter"]) + 1)
+
+        db.collection("section").document(entry_id).set(section)
+
+        user_ref = db.collection("users").document(user_id)
+        user = user_ref.get().to_dict()
+
+        ind = user["sections"].index(entry_id)
+        user["sections"].pop(ind)
+
+        user_ref.update(user)
+
+        return "ok"
+
+
+@app.route('/api/update-section/<section_id>')
+@jwt_required()
+def updateSection(section_id):
+    if current_user.get("isAdmin") == False:
+        return "Доступ запрещён", 403
+    else:
+        update_data = request.get_json()
+        db.collection('section').document(section_id).update(update_data)
+
+        return "ok"
+    
 @app.route("/api/logout")
 def logout():
     response = jsonify({"msg": "logout successful"})
