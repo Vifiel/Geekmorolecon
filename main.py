@@ -84,10 +84,11 @@ def game_by_id(game_id):
 @jwt_required()
 def user_games():
     ids = current_user.get().to_dict()["sections"]
+    print(ids)
     
     data = []
     for game_id in ids:
-        game = db.collection("sections").document(game_id).get().to_dict()
+        game = db.collection("section").document(game_id).get().to_dict()
         game["id"] = game_id
 
         data.append(game)
@@ -264,20 +265,20 @@ def delete_entry(entry_id):
 @jwt_required()
 def admin_delete_entry(section_id, user_id):
 
-    if current_user.get("isAdmin") == False:
+    if current_user.get().get("isAdmin") == False:
         return "Доступ запрещён", 403
     else:
-        section_ref = db.collection("section").document(entry_id).get()
+        section_ref = db.collection("section").document(section_id).get()
         section = section_ref.to_dict()
         
         section["counter"] = str(int(section["counter"]) + 1)
 
-        db.collection("section").document(entry_id).set(section)
+        db.collection("section").document(section_id).set(section)
 
         user_ref = db.collection("users").document(user_id)
         user = user_ref.get().to_dict()
 
-        ind = user["sections"].index(entry_id)
+        ind = user["sections"].index(section_id)
         user["sections"].pop(ind)
 
         user_ref.update(user)
