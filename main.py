@@ -99,36 +99,32 @@ def user_games():
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
 def update_user():
-    user_ref = current_user
-    updates = {}
-    data = request.form
+    data = request.get_json()
+    token = request.headers.get("Authorization", "").replace("Bearer ", "")
 
-    updates['name'] = data.get('name')
-    updates['email'] = data.get('email')
-    if data.get('password'):
-        updates['password'] = hashlib.sha256(data.get('password').encode("utf-8")).hexdigest()
-        user_ref.update(updates)
+    email = data.pop("email", None)
+    if email:
+        doc = current_user.get().to_dict()
+        doc["email"] = email
+        print(doc)
+        db.collection("users").document(email).set(doc)
+        user_data = db.collection("users").document(email).get().to_dict()
+
+        current_user.delete()
+        unset_jwt_cookies(jsonify({"msg": "change"}))
+        
+        user = User(
+                email = user_data["email"],
+                password = user_data["password"],
+                is_admin = user_data["isAdmin"])
+
+        token = create_access_token(identity=user)
+        return jsonify(token)
+
     else:
-        user_ref.update(updates)
-        updates['password']= None
+        current_user.update(data)
 
-    doc = user_ref.get().to_dict()
-    db.collection("users").document(updates['email']).set(doc)
-
-    user_ref.delete()
-
-    user = User(
-            updates["email"],
-            doc.get("password"),
-            is_admin=doc.get("isAdmin", False)
-        )
-
-    unset_jwt_cookies()
-    token = create_access_token(identity=user)
-    return jsonify({"token": token})
-
-
-
+        return jsonify(token)
 
 
 @app.route("/api/register", methods=["POST"])
@@ -165,6 +161,7 @@ def register():
             user_data.get("isAdmin")
             )
     token = create_access_token(identity=user)
+    print(token)
 
     return jsonify({"exists": False, "token": token})
 
@@ -181,6 +178,7 @@ def enter():
     is_pass_match = user_data.get("password") == password_hash
 
     respond = {"exists": user_data.exists, "passMatch": is_pass_match, "token":None}
+    print(respond)
 
     if not is_exist or not is_pass_match:
         return jsonify(respond)
@@ -193,6 +191,7 @@ def enter():
 
         token = create_access_token(identity=user)
         respond["token"] = token
+        print(token)
         return jsonify(respond)
 
 
@@ -237,29 +236,32 @@ def entryToSection():
             forUser['sections'] = sectionsFrUser['sections']
             forSection['counter'] = str(int(usersFrSection['counter']) - 1)
 
-            db.collection('section').document(form_data['id']).set(forSection, merge=True)
-            current_user.set(forUser, merge=True)
+            db.collection('section').document(form_data['id']).update(forSection)
+            current_user.update(forUser)
 
     return "ok"
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
 @jwt_required()
 def delete_entry(entry_id):
-    section_ref = db.collection("section").document(entry_id).get()
-    section = section_ref.to_dict()
-    
-    section["counter"] = str(int(section["counter"]) + 1)
-
-    db.collection("section").document(entry_id).set(section)
-
     user = current_user.get().to_dict()
+    
+    if entry_id in user["sections"]:
+        ind = user["sections"].index(entry_id)
+        user["sections"].pop(ind)
 
-    ind = user["sections"].index(entry_id)
-    user["sections"].pop(ind)
+        current_user.set(user)
+        section_ref = db.collection("section").document(entry_id).get()
+        section = section_ref.to_dict()
+        
+        section["counter"] = str(int(section["counter"]) + 1)
 
-    current_user.set(user)
+        db.collection("section").document(entry_id).set(section)
 
-    return "ok"
+        return jsonify("ok")
+
+    else:
+        return jsonify("Not signed")
 
 @app.route('/api/delete-entry/<section_id>/<user_id>')
 @jwt_required()
@@ -273,7 +275,7 @@ def admin_delete_entry(section_id, user_id):
         
         section["counter"] = str(int(section["counter"]) + 1)
 
-        db.collection("section").document(section_id).set(section)
+        db.collection("section").document(section_id).update(section)
 
         user_ref = db.collection("users").document(user_id)
         user = user_ref.get().to_dict()
