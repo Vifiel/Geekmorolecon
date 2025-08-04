@@ -40,7 +40,6 @@ def user_lookup_callback(_jwt_header, jwt_data):
 @jwt_required()
 def account():
     # Получаем данные пользователя из Firestore
-    print(response.get_json())
     user_dict = current_user.get().to_dict() or {}
 
     return jsonify({
