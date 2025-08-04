@@ -40,6 +40,7 @@ def user_lookup_callback(_jwt_header, jwt_data):
 @jwt_required()
 def account():
     # Получаем данные пользователя из Firestore
+    print(response.get_json())
     user_dict = current_user.get().to_dict() or {}
 
     return jsonify({
@@ -177,7 +178,7 @@ def enter():
     is_exist = user_data.exists 
     is_pass_match = user_data.get("password") == password_hash
 
-    respond = {"exists": user_data.exists, "passMatch": is_pass_match, "token":None}
+    respond = {"exists": user_data.exists, "passMatch": is_pass_match, "token":""}
     print(respond)
 
     if not is_exist or not is_pass_match:
