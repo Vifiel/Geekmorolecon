@@ -198,25 +198,28 @@ def enter():
 @app.route("/api/createSection", methods=["POST"])
 @jwt_required()
 def createSection():
-
     user_data = current_user.get().to_dict()
-    if user_data["isAdmin"] == False:
+    if not user_data["isAdmin"]:
         return "Доступ запрещён", 403
+
+    form_data = request.form.to_dict()
+    form_data["counter"] = int(form_data.get("counter", 0))
+    form_data["places"] = int(form_data.get("places", 0))
+
+    current_section = Section(form_data)
+
+    if "image" in request.files:
+        image = request.files["image"]
+        image_path = f"static/images/games/{current_section.id}.jpg"
+        image.save(image_path)
+        current_section.image = f"http://localhost:5000/{image_path}"
     else:
-        form_data = request.get_json()
-        print(form_data)
-        current_section = Section(form_data)
+        current_section.image = "http://localhost:5000/static/images/games/blank.png"
 
-        if "image" in request.files:
-            image = request.files["image"]
-            image.save(f"static/images/games/{current_secton.id}.jpg")
-        else:
-            current_section.image = "http://localhost:5000/static/images/games/blank.png"
-
-        if not current_section.isExist():
-            current_section.post()
-        else:
-            current_section.update(form_data)
+    if not current_section.isExist():
+        current_section.post()
+    else:
+        current_section.update(form_data)
 
     return jsonify({"id": current_section.id})
 
