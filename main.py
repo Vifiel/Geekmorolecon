@@ -218,7 +218,7 @@ def createSection():
         else:
             current_section.update(form_data)
 
-    return jsonify("ok")
+    return jsonify({"id": current_section.id})
 
 @app.route("/api/entryToSection", methods=["POST"])
 @jwt_required()
@@ -289,16 +289,16 @@ def admin_delete_entry(section_id, user_id):
         return "ok"
 
 
-@app.route('/api/update-section/<section_id>')
+@app.route('/api/update-section/<section_id>', methods=["POST"])
 @jwt_required()
 def updateSection(section_id):
-    if current_user.get("isAdmin") == False:
+    if current_user.get().get("isAdmin") == False:
         return "Доступ запрещён", 403
     else:
         update_data = request.get_json()
         db.collection('section').document(section_id).update(update_data)
 
-        return "ok"
+        return jsonify("ok")
     
 @app.route("/api/logout")
 def logout():
