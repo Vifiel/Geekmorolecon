@@ -203,7 +203,8 @@ def createSection():
     if user_data["isAdmin"] == False:
         return "Доступ запрещён", 403
     else:
-        form_data = request.form.to_dict()
+        form_data = request.get_json()
+        print(form_data)
         current_section = Section(form_data)
 
         if "image" in request.files:
@@ -217,7 +218,7 @@ def createSection():
         else:
             current_section.update(form_data)
 
-    return "ok"
+    return jsonify("ok")
 
 @app.route("/api/entryToSection", methods=["POST"])
 @jwt_required()
