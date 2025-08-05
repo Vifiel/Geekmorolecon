@@ -48,18 +48,29 @@ def account():
 
 @app.route("/api/games")
 def games():
-    
     games = db.collection("section").stream()
 
     data = []
-    for game in games:
-        game_id = game.id
-        game = game.to_dict()
-        game["id"] = game_id
-        data.append(game)
+    for game_doc in games:
+        game = game_doc.to_dict()
+        if game.get("type") == "Партия":
+            game["id"] = game_doc.id
+            data.append(game)
 
     return jsonify(data)
 
+@app.route("/api/sections")
+def sections():
+    games = db.collection("section").stream()
+
+    data = []
+    for game_doc in games:
+        game = game_doc.to_dict()
+        if game.get("type") != "Партия":
+            game["id"] = game_doc.id
+            data.append(game)
+
+    return jsonify(data)
 
 @app.route("/api/games/<game_id>")
 def game_by_id(game_id):
