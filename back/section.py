@@ -28,7 +28,7 @@ class Section:
         return section_data.exists
 
     def post(self):
-        data["image"] = self.image
+        self.data["image"] = self.image
         db.collection("section").document(self.id).set(self.data)
 
     def update(self, new_data):
