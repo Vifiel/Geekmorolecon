@@ -125,13 +125,16 @@ def update_info():
 @app.route('/api/users')
 @jwt_required()
 def users():
-    users = db.collection("users").stream()
+    if current_user.get().get("isAdmin") == False:
+        return "Доступ запрещён", 403
+    else:
+        users = db.collection("users").stream()
 
-    data = []
-    for user in users:
-        data.append(user.get("email"))
+        data = []
+        for user in users:
+            data.append(user.get("email"))
 
-    return jsonify(data)
+        return jsonify(data)
 
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
@@ -339,7 +342,17 @@ def updateSection(section_id):
         db.collection('section').document(section_id).update(update_data)
 
         return jsonify("ok")
-    
+
+@app.route('api/delete-section/<section_id>')
+@jwt_required()
+def deleteSection(section_id):
+    if current_user.get().get("isAdmin") == False:
+        return "Доступ запрещён", 403
+    else:
+        db.collection('section').document(section_id).delete()
+
+        return jsonify("ok")
+
 @app.route("/api/logout")
 def logout():
     response = jsonify({"msg": "logout successful"})
