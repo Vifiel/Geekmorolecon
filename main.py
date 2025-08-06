@@ -269,7 +269,7 @@ def entryToSection():
             db.collection('section').document(form_data['id']).update(forSection)
             current_user.update(forUser)
 
-    return "ok"
+    return jsonify("ok")
 
 @app.route('/api/delete-entry/<entry_id>', methods=['POST'])
 @jwt_required()
@@ -315,7 +315,7 @@ def admin_delete_entry(section_id, user_id):
 
         user_ref.update(user)
 
-        return "ok"
+        return jsonify("ok")
 
 
 @app.route('/api/update-section/<section_id>', methods=["POST"])
