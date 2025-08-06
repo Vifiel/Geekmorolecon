@@ -106,6 +106,21 @@ def user_games():
 
     return jsonify(data)
 
+@app.route('/api/main-info')
+def main_info():
+    info = db.collection('info').document('info').get().to_dict()
+    response = {"date": info["date"], "address": info["address"], "description": info["description"]}
+
+    return jsonify(response)
+
+@app.route('/api/update-info', methods=["POST"])
+@jwt_required()
+def update_info():
+    info_ref = db.collection('info').document('info')
+    data = request.get_json()
+
+    info_ref.update(data)
+    return jsonify("ok")
 
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
