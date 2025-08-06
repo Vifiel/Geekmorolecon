@@ -122,6 +122,17 @@ def update_info():
     info_ref.update(data)
     return jsonify("ok")
 
+@app.route('/api/users')
+@jwt_required()
+def users():
+    users = db.collection("users").stream()
+
+    data = []
+    for user in users:
+        data.append(user.get("email"))
+
+    return jsonify(data)
+
 @app.route('/api/update-user', methods=['POST'])
 @jwt_required()
 def update_user():
