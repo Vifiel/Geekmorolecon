@@ -37,23 +37,57 @@ def user_lookup_callback(_jwt_header, jwt_data):
     return user_snapshot if user_snapshot.get().exists else None
 
 @app.route("/api/account")
-@jwt_required()
 def account():
     # Получаем данные пользователя из Firestore
-    user_dict = current_user.get().to_dict() or {}
+    auth_header = request.headers.get("Authorization")
+    if auth_header and auth_header.startswith("Bearer "):
+        user_dict = current_user.get().to_dict() or {}
 
-    return jsonify({
-        "user":user_dict,
-        })
+        return jsonify({
+            "user":user_dict,
+            })
+    else:
+        return jsonify("Unauthorised")
 
-@app.route("/api/games")
+@app.route("/api/char", methods = ["GET", "POST"])
+def char():
+    char = request.get_json()
+    games = db.collection("section").stream()
+
+    data = set()
+
+    for game_doc in games:
+
+        game = game_doc.to_dict()
+        ch = game.get(char)
+        if game["type"] == "Партия":
+            data.add(ch)
+    return list(data)
+
+@app.route("/api/games", methods = ["GET", "POST"])
 def games():
+    filters = request.get_json()["filters"]
     games = db.collection("section").stream()
 
     data = []
+
     for game_doc in games:
+
         game = game_doc.to_dict()
-        if game.get("type") == "Партия":
+        match = True
+
+        for fil in list(filters.keys()):
+            if fil == "have_places" and filters[fil]:
+                if int(game.get("counter")) > 0:
+                    match = match and True
+                else:
+                    match = False
+            elif fil != "have_places" and filters[fil]:
+                match = match and any((game.get(fil) == f for f in filters[fil]))
+            else:
+                pass
+
+        if match and game.get("type") == "Партия":
             game["id"] = game_doc.id
             data.append(game)
 
@@ -91,20 +125,6 @@ def game_by_id(game_id):
 
     return jsonify(game)
 
-@app.route("/api/user-games")
-@jwt_required()
-def user_games():
-    ids = current_user.get().to_dict()["sections"]
-    print(ids)
-    
-    data = []
-    for game_id in ids:
-        game = db.collection("section").document(game_id).get().to_dict()
-        game["id"] = game_id
-
-        data.append(game)
-
-    return jsonify(data)
 
 @app.route('/api/main-info')
 def main_info():
@@ -166,6 +186,20 @@ def update_user():
 
         return jsonify(token)
 
+@app.route("/api/user-games")
+@jwt_required()
+def user_games():
+    ids = current_user.get().to_dict()["sections"]
+    print(ids)
+    
+    data = []
+    for game_id in ids:
+        game = db.collection("section").document(game_id).get().to_dict()
+        game["id"] = game_id
+
+        data.append(game)
+
+    return jsonify(data)
 
 @app.route("/api/register", methods=["POST"])
 def register():
@@ -343,7 +377,7 @@ def updateSection(section_id):
 
         return jsonify("ok")
 
-@app.route('api/delete-section/<section_id>')
+@app.route('/api/delete-section/<section_id>')
 @jwt_required()
 def deleteSection(section_id):
     if current_user.get().get("isAdmin") == False:
