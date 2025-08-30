@@ -6,7 +6,6 @@ from flask_jwt_extended import create_access_token, get_jwt,get_jwt_identity,uns
 
 from back.section import Section
 from back.user import User, UserData
-from back.create_table import import_data_to_file
 
 from database.init_db import db
 
@@ -392,11 +391,6 @@ def logout():
     response = jsonify({"msg": "logout successful"})
     unset_jwt_cookies(response)
     return response
-
-@app.route("/api/download")
-def download():
-    import_data_to_file()
-    return send_file("static/files/registredUsers.xlsx", as_attachment=True)
 
 
 if __name__ == "__main__":
