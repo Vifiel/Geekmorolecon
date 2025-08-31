@@ -1,0 +1,3 @@
+[submodule "Geekmorolecon-frontend"]
+	path = Geekmorolecon-frontend
+	url = https://github.com/elmalfoy73/Geekmorolecon-frontend

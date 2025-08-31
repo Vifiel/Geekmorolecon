@@ -1,8 +1,10 @@
 import json
 
-from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
+from flask import Flask, send_from_directory, render_template, request, redirect, url_for, jsonify, send_file
 from flask_cors import CORS
 from flask_jwt_extended import create_access_token, get_jwt,get_jwt_identity,unset_jwt_cookies,jwt_required, JWTManager, current_user
+
+from back.mail_utils import generate_token, confirm_token, send_verification_email, mail
 
 from back.section import Section
 from back.user import User, UserData
@@ -11,6 +13,8 @@ from database.init_db import db
 
 from datetime import timedelta, datetime, timezone
 
+from random import randint
+
 import hashlib
 
 import base64
@@ -18,7 +22,12 @@ import base64
 
 app = Flask("Reg")
 app.secret_key = "secret_key"
-CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
+app.config.from_pyfile("config.py")
+
+mail.init_app(app)
+
+REACT_LINK=f"http://localhost:3000"
+CORS(app, supports_credentials=True, origins=REACT_LINK)
 
 app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
@@ -36,10 +45,10 @@ def user_lookup_callback(_jwt_header, jwt_data):
     return user_snapshot if user_snapshot.get().exists else None
 
 @app.route("/api/account")
+@jwt_required(optional=True)
 def account():
     # Получаем данные пользователя из Firestore
-    auth_header = request.headers.get("Authorization")
-    if auth_header and auth_header.startswith("Bearer "):
+    if current_user:
         user_dict = current_user.get().to_dict() or {}
 
         return jsonify({
@@ -213,9 +222,10 @@ def register():
     user_data = user_ref.get()
 
     if user_data.exists:
-        return jsonify({"exists": True, "token": ""})
+        return jsonify({"exists": True})
 
     password_hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
+    
     user_info = {
         "email": email,
         "password": password_hash,
@@ -225,6 +235,45 @@ def register():
         "isAdmin": False,
         "sections": []
     }
+    user = User(
+            user_info["email"],
+            user_info["password"],
+            user_info["isAdmin"]
+            )
+    jwt_token = create_access_token(identity=user)
+
+    token = generate_token(user_info)
+    verify_code = randint(0, 100)
+    send_verification_email(user_info["email"], verify_code)
+    print("Апи отработало")
+
+    return jsonify({"exists": False, "code": verify_code})
+
+
+@app.route("/api/verify", methods=["GET", "POST"])
+def verify_email():
+
+    form_data = request.get_json()
+    email = form_data.get("email")
+    password = form_data.get("password")
+    name = form_data.get("name")
+    contact = form_data.get("contact")
+    image = ""
+    password_hash = hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+    user_info = {
+        "email": email,
+        "password": password_hash,
+        "name": name,
+        "contact": contact,
+        "image": image,
+        "isAdmin": False,
+        "sections": []
+    }
+
+
+    user_ref = db.collection("users").document(user_info["email"])
+
     user_ref.set(user_info)
     user_data = user_ref.get()
 
@@ -233,11 +282,10 @@ def register():
             user_data.get("password"),
             user_data.get("isAdmin")
             )
+
     token = create_access_token(identity=user)
-    print(token)
 
-    return jsonify({"exists": False, "token": token})
-
+    return jsonify({"token": token})
 
 @app.route("/api/enter", methods=["POST"])
 def enter():
