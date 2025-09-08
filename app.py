@@ -15,6 +15,8 @@ from datetime import timedelta, datetime, timezone
 
 from random import randint
 
+import os
+
 import hashlib
 
 import base64
@@ -26,7 +28,10 @@ app.config.from_pyfile("config.py")
 
 mail.init_app(app)
 
-REACT_LINK=f"http://localhost:3000"
+PORT_FLASK = os.getenv("PORT_FLASK")
+
+PORT_REACT = os.getenv("PORT_REACT")
+REACT_LINK=f"http://localhost:{PORT_REACT}"
 CORS(app, supports_credentials=True, origins=REACT_LINK)
 
 app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
@@ -333,9 +338,9 @@ def createSection():
         image = request.files["image"]
         image_path = f"static/images/games/{current_section.id}.jpg"
         image.save(image_path)
-        current_section.image = f"http://localhost:5000/{image_path}"
+        current_section.image = f"http://localhost:{PORT_FLASK}/{image_path}"
     else:
-        current_section.image = "http://localhost:5000/static/images/games/blank.png"
+        current_section.image = f"http://localhost:{PORT_FLASK}/static/images/games/blank.png"
 
     if not current_section.isExist():
         current_section.post()
@@ -455,7 +460,7 @@ def logout():
 
 
 if __name__ == "__main__":
-    app.run()
+    app.run(port = PORT_FLASK)
 
 
 
