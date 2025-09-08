@@ -424,12 +424,25 @@ def updateSection(section_id):
 
         return jsonify("ok")
 
-@app.route('/api/delete-section/<section_id>')
+@app.route('/api/delete-section/<section_id>', methods=["POST"])
 @jwt_required()
 def deleteSection(section_id):
     if current_user.get().get("isAdmin") == False:
         return "Доступ запрещён", 403
     else:
+        users = db.collection('users').stream()
+        print(section_id, type(section_id))
+
+        for user in users:
+            user_sections = user.get("sections")
+            if section_id in user_sections:
+                user_data = user.to_dict()
+                print(user.get('email'))
+                ind = user_sections.index(section_id)
+                user_sections.pop(ind)
+                user_data["sections"] = user_sections
+                db.collection("users").document(user_data["email"]).update(user_data)
+
         db.collection('section').document(section_id).delete()
 
         return jsonify("ok")
