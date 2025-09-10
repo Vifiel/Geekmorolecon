@@ -15,6 +15,8 @@ from datetime import timedelta, datetime, timezone
 
 from random import randint
 
+from app_config import app
+
 import os
 
 import hashlib
@@ -22,17 +24,15 @@ import hashlib
 import base64
 
 
-app = Flask("Reg")
-app.secret_key = "secret_key"
-app.config.from_pyfile("config.py")
+
 
 mail.init_app(app)
 
-HOST = os.getenv("HOST")
+HOST = app.config["HOST"]
 
-PORT_FLASK = os.getenv("PORT_FLASK")
+PORT_FLASK = app.config["PORT_FLASK"]
 
-PORT_REACT = os.getenv("PORT_REACT")
+PORT_REACT = app.config["PORT_REACT"]
 REACT_LINK=f"http://{HOST}:{PORT_REACT}"
 CORS(app, supports_credentials=True, origins=REACT_LINK)
 

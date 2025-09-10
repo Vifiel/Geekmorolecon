@@ -2,11 +2,12 @@ import traceback
 import os
 from flask_mail import Message, Mail
 from itsdangerous import URLSafeTimedSerializer, SignatureExpired, BadSignature
+from app_config import app
 
 mail = Mail()
 
 # Token Serializer
-s = URLSafeTimedSerializer(os.getenv("SECRET_KEY"))
+s = URLSafeTimedSerializer(app.config["SECRET_KEY"])
 
 def generate_token(email):
     """Generate a time-limited token for email verification."""
@@ -26,7 +27,7 @@ def send_verification_email(to, verify_code):
     msg = Message(
         subject="Verify Your Account",
         recipients=[to],
-        sender=os.getenv("MAIL_USERNAME"),
+        sender=app.config["MAIL_USERNAME"],
         html=f"""
         <h1>Код подтверждения {verify_code}<h1>
         <p>Отвечать на это сообщение не нужно</p>
