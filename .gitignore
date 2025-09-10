@@ -16,4 +16,4 @@ build/
 *.egg-info/
 
 /registration-64a55-firebase-adminsdk-fbsvc-1cd4355a96.json
-
+/config.py
