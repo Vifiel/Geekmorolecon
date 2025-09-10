@@ -134,7 +134,7 @@ def game_by_id(game_id):
     users = []
     users_ref = db.collection("users").where("sections", "array_contains", game["id"]).stream()
     for user in users_ref:
-        users.append(user.get("name"))
+        users.append({"name": user.get("name"), "contact": user.get("contact")})
 
     game["users"] = users
 
