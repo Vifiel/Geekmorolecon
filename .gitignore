@@ -15,5 +15,5 @@ dist/
 build/
 *.egg-info/
 
-/registration-64a55-firebase-adminsdk-fbsvc-1cd4355a96.json
+/registration-64a55-firebase-adminsdk-fbsvc-4ba297b537.json
 /config.py
