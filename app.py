@@ -54,7 +54,7 @@ def user_lookup_callback(_jwt_header, jwt_data):
 @app.route("/api/account")
 @jwt_required(optional=True)
 def account():
-    # Получаем данные пользователя из Firestore
+
     if current_user:
         user_dict = current_user.get().to_dict() or {}
 
@@ -62,7 +62,7 @@ def account():
             "user":user_dict,
             })
     else:
-        return jsonify("Unauthorised")
+        return jsonify({"user": None,})
 
 @app.route("/api/char", methods = ["GET", "POST"])
 def char():
@@ -357,19 +357,30 @@ def entryToSection():
     form_data = request.get_json()
 
     forUser, forSection = {}, {}
+    user_time_date = []
 
     usersFrSection = db.collection('section').document(form_data['id']).get().to_dict()
-    sectionsFrUser = current_user.get().to_dict()
 
     if int(usersFrSection['counter']) > 0:
+        sectionsFrUser = current_user.get().to_dict()
         if form_data['id'] not in sectionsFrUser['sections']:
-            sectionsFrUser['sections'].append(form_data['id'])
 
-            forUser['sections'] = sectionsFrUser['sections']
-            forSection['counter'] = str(int(usersFrSection['counter']) - 1)
+            for i in sectionsFrUser['sections']:
+                doc = db.collection('section').document(i).get().to_dict()
+                time = doc['time']
+                date = doc['date']
+                user_time_date.append([time, date])
+                
+            if [usersFrSection['time'], usersFrSection['date']] not in user_time_date:
+                sectionsFrUser['sections'].append(form_data['id'])
 
-            db.collection('section').document(form_data['id']).update(forSection)
-            current_user.update(forUser)
+                forUser['sections'] = sectionsFrUser['sections']
+                forSection['counter'] = str(int(usersFrSection['counter']) - 1)
+
+                db.collection('section').document(form_data['id']).update(forSection)
+                current_user.update(forUser)
+            else:
+                return jsonify("Cross")
 
     return jsonify("ok")
 
