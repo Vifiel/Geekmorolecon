@@ -101,8 +101,8 @@ def games():
                 match = match and any((game.get(fil) == f for f in filters[fil]))
             else:
                 pass
-
-        if match and game.get("type") == "Партия":
+        
+        if match and game.get("type") == "Партия" and get_time(game) < datetime.today():
             game["id"] = game_doc.id
             data.append(game)
 
@@ -471,6 +471,16 @@ def logout():
     unset_jwt_cookies(response)
     return response
 
+def get_time(game):
+    hour, minute = list(game["postTime"].strip('"').split(":"))
+    day, month, year = list(game["postDate"].strip('"').split("."))
+    hour = int(hour)
+    minute = int(minute)
+    day = int(day)
+    month = int(month)
+    year = int(year)
+
+    return datetime(year=year, month=month, day=day, hour=hour, minute=minute)
 
 if __name__ == "__main__":
     app.run(port = PORT_FLASK)
