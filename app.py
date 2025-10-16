@@ -298,7 +298,7 @@ def enter():
     user_data = db.collection("users").document(form_data["email"]).get()
     user_dict = user_data.to_dict()
 
-    password_hash = hashlib.sha256(form_data["password"].encode("utf-8")).hexdigest()
+    password_hash = form_data["password"]
 
     is_exist = user_data.exists 
     is_pass_match = user_data.get("password") == password_hash
