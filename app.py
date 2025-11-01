@@ -33,7 +33,7 @@ HOST = app.config["HOST"]
 PORT_FLASK = app.config["PORT_FLASK"]
 
 PORT_REACT = app.config["PORT_REACT"]
-REACT_LINK=f"http://{HOST}:{PORT_REACT}"
+REACT_LINK=f"https://{HOST}:{PORT_REACT}"
 CORS(app, supports_credentials=True, origins=REACT_LINK)
 
 app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
@@ -482,7 +482,7 @@ def get_time(game):
     return datetime(year=year, month=month, day=day, hour=hour, minute=minute)
 
 if __name__ == "__main__":
-    app.run(port = PORT_FLASK)
+    app.run(port = PORT_FLASK, ssl_context = ('www.geekmorolekon.ru_certificate.txt', 'www.geekmorolekon.ru_private.txt'))
 
 
 
