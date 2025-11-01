@@ -134,7 +134,7 @@ def game_by_id(game_id):
     users = []
     users_ref = db.collection("users").where("sections", "array_contains", game["id"]).stream()
     for user in users_ref:
-        users.append({"name": user.get("name"), "contact": user.get("contact")})
+        users.append({"name": user.get("name"), "contact": user.get("contact"), "id": user.get("email")})
 
     game["users"] = users
 
@@ -365,9 +365,10 @@ def entryToSection():
 
             for i in sectionsFrUser['sections']:
                 doc = db.collection('section').document(i).get().to_dict()
-                time = doc['time']
-                date = doc['date']
-                user_time_date.append([time, date])
+                if doc:
+                    time = doc['time']
+                    date = doc['date']
+                    user_time_date.append([time, date])
                 
             if [usersFrSection['time'], usersFrSection['date']] not in user_time_date:
                 sectionsFrUser['sections'].append(form_data['id'])
