@@ -251,7 +251,6 @@ def register():
     token = generate_token(user_info)
     verify_code = randint(0, 100)
     send_verification_email(user_info["email"], verify_code)
-    print("Апи отработало")
 
     return jsonify({"exists": False, "code": verify_code})
 
@@ -336,7 +335,7 @@ def createSection():
 
     if "image" in request.files:
         image = request.files["image"]
-        image_path = f"var/images/games/{current_section.id}.jpg"
+        image_path = f"/var/images/games/{current_section.id}.jpg"
         image.save(image_path)
         current_section.image = f"{image_path}"
     else:
