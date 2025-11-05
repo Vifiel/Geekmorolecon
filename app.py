@@ -335,11 +335,11 @@ def createSection():
 
     if "image" in request.files:
         image = request.files["image"]
-        image_path = f"/var/images/games/{current_section.id}.jpg"
+        image_path = f"/var/Geekmorolecon/images/games/{current_section.id}.jpg"
         image.save(image_path)
         current_section.image = f"{image_path}"
     else:
-        current_section.image = f"/var/images/games/blank.png"
+        current_section.image = f"/var/Geekmorolecon/images/games/blank.png"
 
     if not current_section.isExist():
         current_section.post()
