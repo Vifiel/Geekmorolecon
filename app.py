@@ -102,7 +102,7 @@ def games():
             else:
                 pass
         
-        if match and game.get("type") == "Партия" and get_time(game) < datetime.today():
+        if match and game.get("type") == "Партия" and get_time(game) < (datetime.today() + timedelta(hours=3)):
             game["id"] = game_doc.id
             data.append(game)
 
