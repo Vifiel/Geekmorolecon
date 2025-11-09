@@ -37,7 +37,7 @@ REACT_LINK=f"https://{HOST}:{PORT_REACT}"
 CORS(app, supports_credentials=True, origins=REACT_LINK)
 
 app.config["JWT_SECRET_KEY"] = "SECRET-KEY"
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=7)
 jwt = JWTManager(app)
 
 
@@ -115,7 +115,7 @@ def sections():
     data = []
     for game_doc in games:
         game = game_doc.to_dict()
-        if game.get("type") != "Партия":
+        if game.get("type") != "Партия" and get_time(game) < (datetime.today() + timedelta(hours=3)):
             game["id"] = game_doc.id
             data.append(game)
 
