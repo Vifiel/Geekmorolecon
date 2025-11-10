@@ -239,6 +239,7 @@ def register():
         "contact": contact,
         "image": image,
         "isAdmin": False,
+        "isMaster": False,
         "sections": []
     }
     user = User(
@@ -272,6 +273,7 @@ def verify_email():
         "contact": contact,
         "image": image,
         "isAdmin": False,
+        "isMaster": False,
         "sections": []
     }
 
