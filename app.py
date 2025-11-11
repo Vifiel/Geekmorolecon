@@ -440,7 +440,7 @@ def updateSection(section_id):
         update_data = request.get_json()
         db.collection('section').document(section_id).update(update_data)
 
-        return jsonify(request.get-json())
+        return jsonify(request.get_json())
 
 @app.route('/api/delete-section/<section_id>', methods=["POST"])
 @jwt_required()
