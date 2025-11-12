@@ -81,7 +81,9 @@ def char():
 
 @app.route("/api/games", methods = ["GET", "POST"])
 def games():
-    filters = request.get_json()["filters"]
+    req = request.get_json()
+    filters = req["filters"]
+    isAdmin = req["isAdmin"]
     games = db.collection("section").stream()
 
     data = []
@@ -102,7 +104,7 @@ def games():
             else:
                 pass
         
-        if match and game.get("type") == "Партия" and get_time(game) < (datetime.today() + timedelta(hours=3)):
+        if match and game.get("type") == "Партия" and (isAdmin or (get_time(game) < (datetime.today() + timedelta(hours=3)) ):
             game["id"] = game_doc.id
             data.append(game)
 
