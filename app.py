@@ -77,7 +77,9 @@ def char():
         ch = game.get(char)
         if game["type"] == "Партия":
             data.add(ch)
-    return list(data)
+
+    data = sorted(list(data))
+    return data
 
 @app.route("/api/games", methods = ["GET", "POST"])
 def games():
