@@ -104,7 +104,7 @@ def games():
             else:
                 pass
         
-        if match and game.get("type") == "Партия" and (isAdmin or (get_time(game) < (datetime.today() + timedelta(hours=3)) ):
+        if match and game.get("type") == "Партия" and (isAdmin or (get_time(game) < (datetime.today() + timedelta(hours=3)) )):
             game["id"] = game_doc.id
             data.append(game)
 
