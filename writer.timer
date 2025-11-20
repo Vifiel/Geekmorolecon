@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Firebase export every hour
+
+[Timer]
+OnBootSec=1min
+OnUnitActiveSec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+

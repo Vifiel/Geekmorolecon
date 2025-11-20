@@ -1,0 +1,9 @@
+[Unit]
+Description=Firebase to Google Sheets Export
+
+[Service]
+ExecStart=/var/Geekmorolecon/Geekmorolecon/sheet-writer.py
+
+[Install]
+WantedBy=multi-user.target
+

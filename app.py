@@ -185,7 +185,6 @@ def update_user():
     if email:
         doc = current_user.get().to_dict()
         doc["email"] = email
-        print(doc)
         db.collection("users").document(email).set(doc)
         user_data = db.collection("users").document(email).get().to_dict()
 
@@ -201,7 +200,12 @@ def update_user():
         return jsonify(token)
 
     else:
-        current_user.update(data)
+        if data["password"]:
+            current_user.update(data)
+        else:
+            d = current_user.get().to_dict()
+            data["password"] = d["password"]
+            current_user.update(data)
 
         return jsonify(token)
 
@@ -420,7 +424,6 @@ def admin_delete_entry(section_id, user_id):
         section_ref = db.collection("section").document(section_id).get()
         section = section_ref.to_dict()
         
-        section["counter"] = str(int(section["counter"]) + 1)
 
         db.collection("section").document(section_id).update(section)
 
@@ -431,6 +434,8 @@ def admin_delete_entry(section_id, user_id):
         user["sections"].pop(ind)
 
         user_ref.update(user)
+
+        section["counter"] = str(int(section["counter"]) + 1)
 
         return jsonify("ok")
 
